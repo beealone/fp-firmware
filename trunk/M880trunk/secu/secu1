@@ -1,0 +1,165 @@
+/*************************************************************
+ *
+ * Author :      SecuGen Corporation
+ * Description : FPLibTest main.c source code module
+ * Copyright(c): 2007 SecuGen Corporation, All rights reserved
+ * History : 
+ * date        person   comments
+ * ======================================================
+ *
+ *
+ *************************************************************/
+
+#include "fplib.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+// ---------------------------------------------------------------- main() ---
+int test_secu(void) 
+{
+
+   long err;
+   DWORD quality;
+   BYTE *imageBuffer1;
+   FILE *fp = NULL;
+	DeviceInfoParam2 deviceInfo;
+   DWORD score;
+
+   printf("\n-------------------------------------\n");
+   printf(  "SecuGen FPLIB Test\n");
+   printf(  "-------------------------------------\n");
+
+   ///////////////////////////////////////////////
+   // Initialize SecuGen Library
+   err = FPMInitLibrary(CN_FDU02);
+   if (err != ERROR_NONE)
+   {
+   	printf("ERROR - Unable to Initlalize SecuGen Library\n");
+   	return 0;
+   }
+
+   printf("\nFPMInitLibrary returned: %ld\n",err);
+
+   ///////////////////////////////////////////////
+   // OpenDevice()
+   printf("\nCall FPMOpenDevice(AUTO_DETECT)\n");
+   err = FPMOpenDevice(AUTO_DETECT);
+   printf("FPMOpenDevice returned : [%ld]\n\n",err);
+  if (err == ERROR_NONE)
+  {
+	
+  
+        ///////////////////////////////////////////////
+        // setLedOn(true)
+        printf("Press <Enter> to turn fingerprint sensor LEDs on >> ");
+        getc(stdin);
+        printf("Call FPMSetLedOn(TRUE)");
+        err = FPMSetLedOn(TRUE);
+        printf("FPMSetLedOn returned : [%ld]\n", err);
+
+
+        ///////////////////////////////////////////////
+        // setLedOn(false)
+        printf("Fingerprint Sensor LEDS should now be illuminated.\n\n");
+        printf("Press <Enter> to turn fingerprint sensor LEDs off >> ");
+        getc(stdin);
+        printf("Call FPMSetLedOn(FALSE)");
+        err = FPMSetLedOn(FALSE);
+        printf("FPMSetLedOn returned : [%ld]\n\n", err);
+
+
+        ///////////////////////////////////////////////
+        ///////////////////////////////////////////////
+        printf("Fingerprint Sensor LEDS should now be off.\n");
+        printf("Press <Enter> to continue >> ");
+        getc(stdin);
+
+
+        ///////////////////////////////////////////////
+        // setBrightness()
+        printf("Call FPMsetBrightness(90)\n");
+        err = FPMSetBrightness(90);
+        printf("FPMSetBrightness returned : [%ld]\n\n",err);
+       
+
+        ///////////////////////////////////////////////
+        // setGain()
+        printf("Call FPMSetGain(1)\n");
+        err = FPMSetGain(1);
+        printf("FPMSetGain returned : [%ld]\n\n",err);        
+
+
+        ///////////////////////////////////////////////
+        // getDeviceInfo()
+        printf("Call FPMGetDeviceInfo()\n");
+	err = FPMGetDeviceInfoEx(SGST_DEV_INFO2,(void*) &deviceInfo);
+        printf("FPMGetDeviceInfoEx returned : [%ld]\n",err);
+	if (err == ERROR_NONE)
+	{
+		printf("\tdeviceInfo.DeviceID   : %ld\n", deviceInfo.DeviceID);
+		printf("\tdeviceInfo.DeviceSN   : %s\n",  deviceInfo.DeviceSN);
+		printf("\tdeviceInfo.ComPort    : %ld\n", deviceInfo.ComPort);
+		printf("\tdeviceInfo.ComSpeed   : %ld\n", deviceInfo.ComSpeed);
+		printf("\tdeviceInfo.ImageWidth : %ld\n", deviceInfo.ImageWidth);
+		printf("\tdeviceInfo.ImageHeight: %ld\n", deviceInfo.ImageHeight);
+		printf("\tdeviceInfo.Contrast   : %ld\n", deviceInfo.Contrast);
+		printf("\tdeviceInfo.Brightness : %ld\n", deviceInfo.Brightness);
+		printf("\tdeviceInfo.Gain       : %ld\n", deviceInfo.Gain);
+		printf("\tdeviceInfo.ImageDPI   : %ld\n", deviceInfo.ImageDPI);
+		printf("\tdeviceInfo.FWVersion  : %04X\n", deviceInfo.FWVersion);
+	}
+	printf("\n");
+
+
+
+        ///////////////////////////////////////////////
+        // getImage() - Fingerprint Capture
+        printf("\nCall FPMSetLedOn(true)\n");
+        err = FPMSetLedOn(TRUE);
+        printf("FPMSetLedOn returned : [%ld]\n",err);
+        printf("Capture. Please place finger on sensor with LEDs on and press <ENTER> ");
+        imageBuffer1 = (BYTE*) malloc(deviceInfo.ImageHeight*deviceInfo.ImageWidth); 
+        getc(stdin);
+        printf("\nCall FPMGetImage()\n");
+        err = FPMGetImage(imageBuffer1);
+        printf("FPMGetImage returned : [%ld]\n\n",err);
+        if (err == ERROR_NONE)
+        {
+	  fp = fopen("fplibtest_c_finger.raw","wb");
+	  fwrite (imageBuffer1 , sizeof (BYTE) , deviceInfo.ImageWidth*deviceInfo.ImageHeight , fp);
+          fclose(fp);
+	}
+
+
+        ///////////////////////////////////////////////
+        // getImageQuality()
+        quality = 0;
+        printf("\nCall FPMGetImageQuality()\n");
+        err = FPMGetImageQuality(deviceInfo.ImageWidth, deviceInfo.ImageHeight, imageBuffer1, &quality);
+        printf("FPMGetImageQuality returned : [%ld]\n",err);
+        printf("Image quality : [%ld]\n\n",quality);
+
+/*
+*/
+        ///////////////////////////////////////////////
+        // closeDevice()
+        printf("\nCall FPMCloseDevice()\n");
+        err = FPMCloseDevice();
+        printf("FPMCloseDevice returned : [%ld]\n",err);
+		
+        imageBuffer1 = NULL;
+		
+  }
+        ///////////////////////////////////////////////
+        // Close SecuGen Library
+	err = FPMExitLibrary();
+	if (err != ERROR_NONE)
+	{
+		printf("ERROR - Unable to Close SecuGen Library\n");
+	}
+	printf("\nFPMExitLibrary returned: %ld\n",err);
+
+  
+  return 0;
+}
+

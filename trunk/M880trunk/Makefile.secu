@@ -1,0 +1,91 @@
+EXECUTABLE := main
+
+#PLATFORM := arca
+#CROSS_COMPILE := arca-
+
+ARCH := mips
+#PLATFORM := jz_7131
+PLATFORM := secu
+
+#PLATFORM := jz_uru
+
+CROSS_COMPILE := mipsel-
+
+ZEM300 := -DZEM300
+ZEM510 := -DZEM510
+
+#PUSH_SDK := -DPUSH_SDK
+#HTTPD_SDK := -DHTTPD_SDK
+
+#WEBSERVER := -DWEBSERVER
+#WEBLIB := -L./$(PLATFORM) -lwebserver_a
+WEBLIB :=  ./webinterface/libdl.a
+
+#MP3PLAY := -DMP3PLAY
+#MP3LIB := ./$(PLATFORM)/mpg123.a
+
+###URU MUST DEFINE FOLLOWING### 
+SENSOR := -DSECU
+
+MATHLIB := -lm
+MATHLIB := ./$(PLATFORM)/libm.a
+#URULIB := ./$(PLATFORM)/libusbdpfp.a
+
+WAVLIB := ./$(PLATFORM)/wavplay.a
+SECLIB := -lstdc++ ./$(PLATFORM)/libfplib.a ./$(PLATFORM)/libusb.so ./$(PLATFORM)/libvenusdrv.so  ./$(PLATFORM)/libvenus.so
+
+
+MINIGUI := -I /usr/local/kenny.400/include
+
+
+#-msoft-float -mips32 -Wall -O6
+CFLAGS :=-g -I. -I./$(PLATFORM) -Wall -D__GNU__ $(WEBSERVER) $(MP3PLAY) $(ZEM300) $(SENSOR) $(ZEM510)
+CFLAGS := -O2 -I. -I./$(PLATFORM) $(MINIGUI) -Wall -D__GNU__ $(WEBSERVER) $(MP3PLAY) $(ZEM300) $(SENSOR) $(PUSH_SDK) $(HTTPD_SDK)$(ZEM510)
+CXXFLAGS := $(CFLAGS)
+CC := $(CROSS_COMPILE)gcc
+STRIP := $(CROSS_COMPILE)strip
+FPDIR := em_source_42
+
+FPLIB := -L./$(PLATFORM) -lzkfp $(WEBLIB) $(MP3LIB) $(SECLIB) -L /usr/local/kenny.400/lib/ -lminigui -lmgext  -L /usr/local/mips/mips-gcc3.2.3/mipsel-redhat-linux/lib/ -ljpeg libcam.a $(ARCH)/libshttpd.a $(ARCH)/libdl.a
+
+
+#SOURCE := $(wildcard *.c) $(wildcard *.cc) $(wildcard $(FPDIR)/*.c) 
+SOURCE := $(wildcard *.c) $(wildcard *.cc) $(wildcard $(PLATFORM)/*.c) 
+OBJS := $(patsubst %.c,%.o,$(patsubst %.cc,%.o, $(SOURCE)))
+DEPS := $(patsubst %.o,%.d,$(OBJS))
+MISSING_DEPS := $(filter-out $(wildcard $(DEPS)),$(DEPS))
+MISSING_DEPS_SOURCES := $(wildcard $(patsubst %.d,%.c,$(MISSING_DEPS)) \
+$(patsubst %.d,%.cc,$(MISSING_DEPS)))
+CPPFLAGS += -MD
+
+TARGET_PATH=/tftpboot/
+
+$(EXECUTABLE) : $(OBJS)
+	$(CROSS_COMPILE)gcc -I. -I./$(PLATFORM) -c -o ./$(PLATFORM)/$(PLATFORM).o ./$(PLATFORM)/$(PLATFORM).c 
+	$(CROSS_COMPILE)gcc -o $(EXECUTABLE) $(OBJS) $(FPLIB) $(WAVLIB) $(URULIB) -lcrypt -L./$(PLATFORM) $(MATHLIB)  
+	#$(STRIP) --strip-all $(EXECUTABLE)
+	#cp $(EXECUTABLE)  /tftpboot/
+
+dest : $(OBJS)
+	$(CROSS_COMPILE)gcc -I. -I./$(PLATFORM) -c -o ./$(PLATFORM)/$(PLATFORM).o ./$(PLATFORM)/$(PLATFORM).c 
+	$(CROSS_COMPILE)gcc -o $(EXECUTABLE) $(OBJS) $(FPLIB) $(WAVLIB) $(URULIB) -lcrypt -L./$(PLATFORM) $(MATHLIB) libcx.a
+
+	$(STRIP) --strip-all $(EXECUTABLE)
+#	cp $(EXECUTABLE) /opt/mipsroot/mnt/mtdblock/data/
+	cp $(EXECUTABLE) $(TARGET_PATH)$(EXECUTABLE) -f
+	gzip $(EXECUTABLE) -f 
+	cp $(EXECUTABLE).gz  $(TARGET_PATH)$(EXECUTABLE).gz -f
+	cp LANGUAGE.S $(TARGET_PATH) -f
+	cp LANGUAGE.E $(TARGET_PATH) -f
+
+clean:
+	rm  -f $(OBJS) 
+
+cleanall:
+	rm  -f $(OBJS)
+#	rm  *.h~
+#	rm  *.c~
+	rm  *.d
+	rm -rf jz_7131/*.d
+	rm -rf jz_uru/*.d
+	rm -rf jz_secu/*.d

@@ -1,0 +1,1853 @@
+				ChangeLog
+				
+提醒：以后大家提交的时候，都使用这种格式写上提交的目的以及更改的bug.
+格式：
+
+提交日期：
+提交者：
+主要目的：
+备注：
+具体更改部分：
+... ...
+
+******************************************************************
+**提交日期:2013年10月10日
+**提交者: 容照存
+**主要目的:处理bug
+** 	
+**版本号：Ver 6.5.4(build 141)
+**备注：
+1、伊朗日历下，查看Sys Info的时候 ，在Device界面中显示 Manu Time时进行公历到伊朗日历的转换，此转换存在内存越界的问题，导致机器死机。
+2、彩屏机器在打开多种验证方式和门禁的时候，在用户门禁里面设置用户验证方式为个人验证如FP&RF等，退出后，再到编辑用户界面编辑当前的用户的其它信息，
+接着再去查看这个用户的门禁里面用户验证方式的时候会出就会变为使用组验证。
+
+******************************************************************
+**提交日期:2013年9月28日
+**提交者: 容照存
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 140)
+**备注：
+1、指纹卡验证通过后两声"Thank you"
+2、阿拉伯语短消息分发界面工号显示乱码。
+3、阿拉伯语指纹卡登记显示不对齐。
+
+
+******************************************************************
+**提交日期:2013年4月28日
+**提交者: 钟佳然
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 137)
+**备注：
+1、修改U盘导入考勤软件编辑的管理员用户到机器对应权限错误问题
+
+******************************************************************
+**提交日期:2013年4月25日
+**提交者: 曾宪洲
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 136)
+**备注：
+1、修改新版sdk小彩屏固件9.0算法指纹无法高速下载问题（设备到软件）
+2、修改用户数量大于30000时，点击新增用户卡的问题，（查找空闲工号需要20多秒）
+3、修改短消息分发翻页问题
+
+******************************************************************
+**提交日期:2013年4月19日
+**提交者: 曾宪洲
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 135)
+**备注：
+	1、通过脱机sdk删除数据时，机器重启（已取消此功能）
+2、增加固件获取push版本功能
+3、用户管理界面修改“*”键设置为向上翻页，“#”向下翻页
+
+******************************************************************
+**提交日期:2013年4月7日
+**提交者: 曾宪洲
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 134)
+**备注：
+	1、修改133版本加3G固件恢复其它设置或者恢复出厂设置后变成加GPRS菜单，没有了RS232/485菜单问题
+
+******************************************************************
+**提交日期:2013年3月26日
+**提交者: 曾宪洲
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 133)
+**备注：
+	1、修改装电池启动时，显示为交流电信息，而无电池信息显示问题
+	2、考勤记录查找最大只能查找到186条问题（现已修改，查找个人最大数为31*6*3条，查找所有用户最大数为31*6*3*10条）
+
+******************************************************************
+**提交日期:2013年3月13日
+**提交者: 钟佳然
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 132)
+**备注：
+	1.修改连接超时后闪屏问题。
+	2.修改510和560的循环延时方式。
+
+******************************************************************
+**提交日期:2013年3月9日
+**提交者: 钟佳然
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 131)
+**备注：
+	1、修改锁驱动时长错误的问题
+	2、push库更新，修改重复关闭句柄问题
+
+******************************************************************
+**提交日期:2013年3月7日
+**提交者: 曾宪洲
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 130)
+**备注：
+	1、修改usb232高速下载数据失败问题（此问题为usb驱动更换导致，现修改固件解决此问题）
+
+******************************************************************
+**提交日期:2013年3月5日
+**提交者: 钟佳然
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 129)
+**备注：
+	1、修改 设置DNS清空后再设置
+
+******************************************************************
+**提交日期:2013年3月5日
+**提交者: 曾宪洲
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 128)
+**备注：
+	1、修改胁迫报警延时为0时，机器不报警问题
+	2、修改用户满容量时，进入新增用户提示框后，不操作，超时退出时提示框不能销毁问题
+	3、修改老wifi模式下初始化窗体时数组越界问题
+
+******************************************************************
+**提交日期:2013年2月28日
+**提交者: 曾宪洲
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 127)
+**备注：
+	1、修改英语界面时，删除考勤照片界面语言截断问题
+	2、更新push库、修正组设置问题
+
+******************************************************************
+**提交日期:2013年2月25日
+**提交者: 钟佳然
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 126)
+**备注：
+	1、修改电源信息在没有电池时，电量显示为100%的问题
+	2、更新push库、修正组设置问题
+
+******************************************************************
+**提交日期:2013年2月23日
+**提交者: 钟佳然
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 125)
+**备注：
+	1、修改push实时上传设备信息问题
+	2、修改 无条件创建播放语音线程
+
+******************************************************************
+**提交日期:2013年1月30日
+**提交者: 钟佳然
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 124)
+**备注：
+	1、修改用户统计错误问题
+	2、修改满容量时，反复进入新增用户菜单时，内存泄漏问题
+	3、修改管理员登记卡，普通用户登记卡用普通用户卡验证管理员语音提示非法管理，界面上提示请按手指，刷卡无反应问题
+	4.修改外部响铃无法关闭问题
+	5.修改在同步时间之后，时钟显示连续跳两格的问题
+
+******************************************************************
+**提交日期:2013年1月30日
+**提交者: 钟佳然、曾宪洲
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 123)
+**备注：
+	1、修改循环删除考勤记录错误问题
+
+******************************************************************
+**提交日期:2013年1月29日
+**提交者: 钟佳然
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 122)
+**备注：
+	1、修改外部韦根输入问题
+
+******************************************************************
+**提交日期:2013年1月28日
+**提交者: 曾宪洲
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 121)
+**备注：
+	1、修改485通讯和232通讯速度慢的问题
+	2、MCU版本为29时，锁驱动延时以秒为单位，其它版本则以1/25秒为单位
+	3、清除ZEM800编译警告
+	4、修改照片上传服务器设置不能生效，和按取消不能退出界面问题
+
+******************************************************************
+**提交日期:2013年1月23日
+**提交者: 曾宪洲、钟佳然
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 120)
+**备注：
+	1、修改3G状态图标刷新问题
+	2、修改俄语姓名转换本地码时出错问题
+	3、修改wifi设置阿拉伯语界面问题
+	4、修改姓名限制为最长23个字节
+	5、修改脱机sdk下载数据方式，现采用分包形式，两次分包，两次校验
+	6、修改SRB自定义时长时，时间不准确问题
+	7、修改单独删除考勤照片无提示，在删除指纹、密码或卡后才回提示删除考勤照片问题
+	8、修改MCU版本为27时锁驱动时长不准确问题
+	9、修改脱机sdk下载考勤照片，工号大于5位时不能下载考勤照片问题
+	10、pushsdk支持9.0指纹算法
+
+******************************************************************
+**提交日期:2013年1月9日
+**提交者: 曾宪洲、钟佳然
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 119)
+**备注：
+	1、修改老wifi模块连接问题、push只上传照片功能时，增加新独立界面
+	2、修改GPRS功能的固件打开GPRS功能后恢复出厂设置后不要有RS232和RS485通讯功能的菜单
+	3、删除指纹头检测失败机器重启功能
+	4、修改zem560/600/800使用systemEx
+	5、将zem560、zem600和zem800的system改为systemEx，使用vfork
+	6、修改出现两个一样工号问题
+	7、修改脱机sdk高速上传下载，软件下发使用写文件方式，软件读取使用读2M发2M方式
+	8、修改指纹采集问题
+	9、修改出入反潜BUG
+	10、修改锁驱动时长、修改脱机sdk高速下发，机器第一个用户出现重复数据问题
+	11、修改连续播放语音问题，响铃音量问题、3寸menu首次进入按键首次无效
+	12、修改vc353指纹头支持，界面问题、修改英文界面登记10个指纹时提示显示不全问题
+	13、修改232、485高速下载指纹失败问题
+	14、修改摄像头导致死机问题
+
+******************************************************************
+**提交日期:2012年12月31日
+**提交者: 曾宪洲
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 118.9)
+**备注：
+	1、修改波斯语显示问题、zem510平台摄像头问题、添加支持指纹旋转的参数
+	2、修改不停进出管理菜单死机问题
+	3、解决频繁进出menu菜单死机问题
+	4、修改保存记录不成功时闪灯、修改开机播放tts 导言按键死机
+
+******************************************************************
+**提交日期:2012年11月21日
+**提交者: 曾宪洲
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 117.0)
+**备注：
+	1、将原来用户浏览的常量全部改成宏定义
+	2、修改外部韦根，韦根输入输出定义了五种模式
+	3、修改开机拆机报警问题、考勤记录满容量不自动删除问题
+	4、新增SRB功能（参数IsWGSRBFunOn）
+	5、修改Mifare卡获取扇区信息问题
+	6、修改分发个人短消息时，用户浏览往下翻不能自动翻页问题
+	7、解决考勤记录查找时死机的bug
+	8、为算法库接口（BIOKEY_GET_PARAMETER）加线程锁，确保多线程使用时，无异常
+	9、修改mifare卡登记保存容量限制
+	10、修改后台验证bug
+	11、添加初始化加载提示、.修改执行单片机命令回应处理、添加初始化指纹数量参数
+	12、修改pushsdk上传数据时，读数据方式。解决主子线程同时读数据错误问题
+	13、优化pushsdk上传速度
+	14、更新pushsdk连接zknet的死机的问题
+	15、处理指纹头通讯失败时重启问题，重启之前将机器设置为非指纹机器
+	16、更新push库，确保第一次连接服务器时，上传设备信息
+	17、更新push库，修正删除指纹不能成功问题
+	18、修改睡眠禁用机器出现假死问题、修改weigand输入界面设置
+	19、更新push库，优化父子进程通信速度、解决断电后上传全部指纹数据不成功问题
+	20、修改新增用户时查找空闲工号不对问题、修改不能自动删除考勤记录问题
+
+******************************************************************
+**提交日期:2012年11月16日
+**提交者: 曾宪洲
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 116.9)
+**备注：
+	1、解决zem600-iclock660机器，在设备上登记了管理员或登记员后，在进行管理者确认时，指纹头出现短暂死掉的现像，30秒之后会反回主界面 问题
+	2、修改翻页bug
+	3、更新gprs库
+
+******************************************************************
+**提交日期:2012年10月25日
+**提交者: 曾宪洲
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 116.8)
+**备注：
+	1、修改用户查找bug
+	2、处理编译zem560警告信息
+	3、消除zem560警告
+	4、修改门禁参数管理问题
+	5、修改拍照模式bug
+	6、去掉多余的打印信息
+	7、修正用户照片和指纹的上传
+	8、修改设置了多个开锁组合后，例如，设置组1和组2后，对组2进行编辑保存后，再进入组1界面，不对机器进行操作，之后机器会死掉（机器屏幕成蓝色，指纹头是没反应的，按设备上的任何按键，机器也是没反应的）bug
+	9、优化用户管理界面
+	10、修改验证方式在开门禁功能和不开门禁功能时默认值的问题
+	11、modify pushsdk bug
+	12、增加删除所有指纹时自动重启功能，10.0算法指纹容量满时，删除所有指纹后，再用软件上传指纹到机器时机器死机
+	13、提示重启生效
+
+
+******************************************************************
+**提交日期:2011年5月19日
+**提交者:dsl
+**主要目的:优化
+** 	
+**版本号：Ver 6.5.4(build 116.1)
+**备注：
+	1	新增功能：
+1.1	用户权限管理
+在新增用户时对用户的权限现分三级管理，分别为普通用户、登记员、管理员。
+1.	登记员与管理员权限区别如下：
+登记员，对用户管理、时间日期、上传下载->U盘上传数据、自动测试、记录查询、系统信息菜单具有权限。
+管理员-对所有菜单具有权限。
+2.	在新增用户时，在任何情况下都可以为用户选择任何权限。
+3.	在用户修改时，权限不能向更高级权限修改。如果A用户在登记时其权限为登记员，在保存之后，再修改时，该用户的权限不能设置为管理员权限，只能修改为普通用户权限。
+1.2	支持外接RS485指纹读头功能
+1.	带高级门禁功能且ZEM800核心板的机器支持该功能。
+2.	参数与设置配置：
+Reader485FunOn=1 //该参数设置值为0,1。0—表示机器不支持外接RS485指纹读头功能，1—表示支持支持外接RS485指纹读头功能。默认值为0.当Reader485FunOn设为1 时，在用户管理->门禁设置界面显示“485读头功能”选项菜单。
+Reader485On=0 //表示是否使用外接RS485读头功能。该值通过菜单界面来设置。0-表示关闭，1-表示开启。
+3.	备注
+a)	不支持通过从机( 485读头) 登记指纹或登记卡
+b)	主从机可以实现反潜功能，反潜支持四种验证方式(在用户管理/门禁设置/门禁组设置)：FP , RF , FP/RF , FP&RF
+c)	使用485读头功能时不支持算法切换，默认10.0算法
+d)	从机验证指纹图像显示方式：比对时不显示指纹图片，用特定图片代替
+e)	修改485读头功能菜单后必须手动重启才生效
+f)	485指纹读头拨码开关设置：拨码开关的1-6项开关项须拨到OFF处。如果其开关2-6项有拨到ON时，会造成不能识别问题.
+Reader485FunOn=1
+Reader485On=1
+RS232BaudRate=115200
+RS485On=1
+~RS485Port=0
+RS232On=0
+InBIOComType=3
+~ZKFPVersion=10
+AlarmReRec=0
+FreeTime=0
+~LockFunOn=15 // 15-高级门禁, 1-简单门禁（只支持开锁功能）
+
+增加新文件：
+inbiocomm，该文件需要放在/mnt/mtdblock/ 目录下。
+wdt_new, 该文件存放在/mnt/mtdblock/data/目录下
+
+auto.sh脚本修改:
+if [ -f $DEST/inbiocomm ];then
+chmod u+x $DEST/inbiocomm && cd $DEST && $DEST/inbiocomm &
+fi
+
+if [ -f $DEST/main ]; then
+cd $DEST && chmod u+x $DEST/main && $DEST/main &
+fi
+
+if [ -f $DEST/data/wdt_new ]; then
+cd $DEST/data && chmod u+x $DEST/data/wdt_new && $DEST/data/wdt_new -p 5 -t 3600 -m "$DEST/main" -n "$DEST/inbiocomm"
+fi
+
+删除原wdt的加载
+if [ -f $DEST2/wdt ]; then
+cd $DEST/data && chmod u+x $DEST/data/wdt && $DEST/data/wdt -p 5 -t 3600 -m "/mnt/mtdblock/main”
+fi
+1.3	脱机SDK支持下载、删除考勤照片功能
+支持读取考勤通过和未通过照片总数、读取通过和未通过考勤照片列表、按时间段读取考勤照片列表、删除所有考勤照片、按时间段删除考勤照片、下载考勤照片功能。
+1.4	下载最新考勤记录功能。
+原有的下载考勤记录接口不变。
+参数说明：
+DownloadNewLog=1 //支持下载最新考勤记录功能，固件默认打开此功能。
+AttOffset=0 //记录最后一次下载了多少条记录数。其值会自动维护处理。如果在options.cfg中AttOffset=100，表示已下载了100条记录，下次下载时从101条记录处开始下载。如果把AttOffset=0，那在下载时从第一条记录开始下载。
+DownloadNewLog=1
+AttOffset=0
+
+1.5	Mimfare 支持10.0指纹算法
+1.	该功能只支持S70 Mifare卡(卡容量为2KB).只支持1枚10.0指纹的存储.
+2.	读写速度：使用当前生产使用的Mifare卡模块，在向扇区读写数据时其速度约为5秒。
+3.	参数：
+~MIFARE=1
+~MIFAREID=0
+~RFSStart=0  //Mifare卡开始读写扇区，默认为0
+~RFSLen=10  // Mifare卡读写多少扇区，对于S50(1KB)卡，一般默认为10，对于10.0的指纹模板，需要用到S70(2KB)卡，因此需要设置参数的值为32.
+~RFFPC=1	//Mifare卡存放多少枚指纹，对于S50卡且9.0算法最多支持4枚，对于10.0算法，且S70块，最多支持1枚指纹。
+
+1.6	指纹头停止工作后，机器自动重启功能
+1.	当固件检测的指纹头不能正常采集指纹图象时，机器立即重启。在重启机器之前固件会增加一条操作日志，其相应的操作代码为：72.操作日志内容可以使用特别软件查看。
+2.	此功能需要更换驱动。对于zem800平台，需更换cim.ko驱动。对于zem600平台需要更换cim.ko与hv7131.ko驱动。对于ZEM5XX平台，不支持该功能。
+
+1.7	当考勤照片容量满时，自动删除老照片功能.
+1.	当考勤照片所占空间达到所规定的”考勤照片空间警告大小”后，或者考勤照片合计数达到最大支持的容量后，自动删除X张照片。
+2.	参数：
+DelPictureCnt=20 //自动删除前20张照片。该值为0时，不支持删除功能。
+CaptureAlarm=20 //照片空间警告大小，单位为百分比。如果flash空间还剩20%时，固件给于提示。如果照片所点空间超过 “照片空间警告大小”后，再超过5%，则固件不保存考勤照片。如:该值为20，那说明flash空间还剩20%时，固件提示空间快满，当空间还剩15%时,固件认为flash空间已满，考勤照片将不保存。
+
+DelPictureCnt=20
+CaptureAlarm=20
+1.8	外接响铃继电器自测试功能
+1.	在自动测试界面增加外接继电器响铃自测试功能，不需要额外的外接报警器，只通过是否有继电器闭合声音来判断是否支持该功能。
+2.	参数：
+~AAFO=1				//1-支持定时响钤功能， 0-关闭
+~ExtBell=1				//支持外接继电器响钤
+~LockFunOn=0			//关闭门禁功能，对于外接继电器响铃功能，一般关闭门禁功能。
+isSupportAlarmExt=1		//开启外接继电器响钤,此可以在系统设置->其它设置->外部响铃菜单来设置。
+ExAlarmDelay=60			//外接继电器响钤时间长，单位为秒。
+UseNewBell=1
+1.9	HID卡自动识别及Wiegand功能
+1.	HID卡自动识别功能。通常hid卡格式有wiegand 26, wiegand 34等，对于其它的HID卡的格式的卡，难于识别，因此对于其它格式的HID卡，mcu发送出相应的HID数据，固件根据自定义的格式，用于识别。
+2.	MCU版本20以上支持此功能。
+3.	最大支持128bits HID卡号
+4.	内部(HID卡模块、ID块模块)默认支持的格式有：
+名称	格式	默认
+Wiegand26	pccccccccccccccccccccccccp:eeeeeeeeeeeeeooooooooooooo	是
+Wiegand34	pssssssssccccccccccccccccccccccccp:eeeeeeeeeeeeeeeeeooooooooooooooooo	
+WiegandFmt36a	pffffffffffffffffccccccccccccccccmmp:ooooooooooooooooooeeeeeeeeeeeeeeeeee	
+WiegandFmt36	pffffffffffffffffffccccccccccccccccp:eeeeeeeeeeeeeeeeeeoooooooooooooooooo	
+WiegandFmt37a	pmmmmsssssssssssscccccccccccccccccccp:oeobeobeobeobeobeobeobeobeobeobeobeoe	
+WiegandFmt37	Pmmmffffffffffssssssccccccccccccccccp:eeeeeeeeeeeeeeeeeeooooooooooooooooooo	
+WiegandFmt50	pssssssssssssssssccccccccccccccccccccccccccccccccp:eeeeeeeeeeeeeeeeeeeeeeeeeooooooooooooooooooooooooo	
+特定字母说明：
+p:表示HID卡启停位
+s:siteCode,中文可译为区位码。
+e:偶校验位
+o:奇校验位
+f: facilityCode,中文可译为设备代码
+m: manufactureCode, 中文可译为厂商代码
+c: 卡号
+b: 表示该位既参数奇校验，也参加偶校验，在使用中很少使用.
+注：所有的字母为小写。
+示例1：如果某HID卡的格式为wiegand 42,其厂商提供的格式有一个字节（8bits）表示厂商代码，用1个字节表示区位码，用3个字节表示卡号，那格式可简单定义如下：
+pmmmmmmmmssssssssccccccccccccccccccccccccp
+在options.cfg中配置方式为：
+IntWiegandInFmt= pmmmmmmmmssssssssccccccccccccccccccccccccp:eeeeeeeeeeeooooooooooo
+
+注：对于一些常用的HID卡，通常为Wiegand 26位格式，其中用一字节表示site code,用两个字节表示卡号。其格式表现为：pssssssssccccccccccccccccp:eeeeeeeeeeeeeooooooooooooo，对于此卡，需要在options.cfg中设置
+IntWiegandInFmt=pssssssssccccccccccccccccp:eeeeeeeeeeeeeooooooooooooo
+如HID 印刷字样为：03143  33004298-6，03143通常为卡号。 
+
+5.	参数说明
+~ExtWGInFunOn=1 //扩展Wiegand功能
+~RFCardOn=1		//卡功能（当支持mifare卡时，也需要设置此参数为1）
+~MIFARE=0		//mifare卡功能
+~MIFAREID=0	//mifare卡当作ID卡使用
+
+Wiegand输入: 
+ExtWGInPulseWidth=100		//Wiegand输入脉冲宽度,单位为微秒
+ExtWGInPulseInterval=1000	//Wiegand输入脉冲间隔,单位为微秒
+ExtWiegandInFmt=Wiegand26	//Wiegand输入解析格式。默认为Wiegand26
+WiegandInType=0 //Wiegand输入类型，0-工号，1-卡号
+以上参数可以在通讯设置->韦根设置->输入配置菜单中设置
+
+Wiegand输出
+WGFailedID=-1 //默认为-1， 失败ID，在验证失败时输出相关内容。取值范围为:0-65535.可以通过菜单配置。
+WGSiteCode=-1 			//区位码，默认为-1, 取值范围为:0-65535.可以通过菜单配置。
+WGOutputType=0 			//输出类型：0-输出工号，1-输出卡号
+WGInPulseWidth=100 		//脉冲宽度,默认为100
+WGInPulseInterval=1000 	//脉冲间隔,默认为1000.
+WiegandFmt=Wiegand26 	//输出格式。在界面中默认只能选择wiegand 26和wiegand34两种格式,如果想输出其它格式，可以在参数中以上面的格式进行配置
+注：以上数可以在通讯设置->韦根设置->输出配置菜单中设置
+WGDuressID=-1 //胁迫ID，默认为-1.
+WGOEMCode=0   //厂商代码
+WGFacilityCode=0  //设备代码
+
+HID卡、ID卡模块通信参数设置。对于下面的参数一般不需要在参数中进行配置。
+IntWGInPulseWidth=100		//HID块模块脉冲宽度
+IntWGInPulseInterval=1000		//HID块模块脉冲间隔
+IntWiegandInFmt= 			//HID块模块，卡号解析格式。详细的格式定义请见上面.如果不在参数中设置此参数，那mcu将以wiegand26的方式来解析卡号
+6.	Wiegand输出行为定义：
+序号	验证结果	条件	输出内容
+1	失败	WGFailedID >=0	WGSiteCode < 0	机器编号,WGOEMCode,WGFacilityCode,WGFailedID
+2	失败	WGFailedID >=0	WGSiteCode > 0	WGSiteCode,WGOEMCode,WGFacilityCode,WGFailedID
+3	通过	WiegandOutType=0	WGSiteCode < 0	用户编号,WGOEMCode,WGFacilityCode
+4	通过	WiegandOutType=0	WGSiteCode >= 0	WGSiteCode,用户编号,WGOEMCode,WGFacilityCode
+5	通过	WiegandOutType=1	WGSiteCode < 0	卡号,WGOEMCode,WGFacilityCode
+6	通过	WiegandOutType=1	WGSiteCode >= 0	WGSiteCode,卡号,WGOEMCode,WGFacilityCode
+注：1.在输出格式中如果没有对OEMCode(对应厂商代码,)和FacilityCode（对应设备代码）格式的定义，wigand输出的信号中将不包含这些数据   2.当用户编号的长度超过10位时,不输出wiegand信号
+
+1.10	ID卡卡号表示方式
+1.	参数：
+IDCardStyle=0  //卡号表示方式
+示例说明：ID卡的卡号为, 0010930095  166，51119.
+IDCardStyle=0,卡号表示为: 10930095
+IDCardStyle=1,卡号表示为: 16651119
+IDCardStyle=2,卡号表示为: 51119
+1.11	版本信息显示
+1.	在系统信息菜单增加其它信息显示功能.对于对于版本的文字描述，在多国语言版本时，通一用英语描述.
+2.	显示的内容如下：
+MCU版本号、
+GPRS/3G库版本号及模块信息、IclockSvr(PUSH SDK) 版本号、摄像头库版本号与硬件信息。对于这些信息只有当机器支持时才显示
+
+1.12	考勤记录容量满时自动删除老考勤记录
+1.	参数
+DelRecord=10000 //固件默认开启此功能。0：关闭此功能，大于0表示自动删除多少条考勤记录。
+
+2	优化功能：
+2.1	BS功能
+1.	更新/mnt/mtdblock/lib/libhttppush.so库。
+2.	在脚本中增加：ln -s $DEST/lib/libhttppush.so /lib/libhttppush.so -f
+2.2	拍照功能
+3.	以动态连接库的方式支持拍照功能。
+4.	固库同时支持最新VC353和301PH摄像头
+5.	对于VC353摄像头，解决了照片拍照不全、与当前拍照时显示上次所拍照片情况。
+6.	优化了拍照速度与视频设置显示效果。
+7.	对于VC353摄像头，现暂不支持对亮度、对比度、质量、环境的设置。
+8.	参数：
+CameraOpen=1 //1-打开拍照功能, 0-关闭
+
+9.	摄像头更新方式：
+老摄像头(301PLH)，新固件：
+把libcam_301.so重命名为: libcam.so,存入在/mnt/mtdblock/lib目录下
+	在auto.sh脚本中或者nand(ZEM565,ZEM560)脚本中增加以下链接：
+	ln -s $DEST/lib/libcam.so /lib/libcam.so –f
+
+新摄像头(VC353)，新固件：
+把libcam_353.so重命名为: libcam.so,存放在/mnt/mtdblock/lib目录下
+把uvcvideo.ko存入在/mnt/mtdblock/drivers目录下
+	在auto.sh脚本中或者nand(ZEM565,ZEM560)脚本修改：
+	//创建链接
+	ln -s $DEST/lib/libcam.so /lib/libcam.so –f
+	
+	不加载老摄像头
+#if [ -f $DEST/drivers/gspca_main.ko ]; then
+#      insmod $DEST/drivers/gspca_main.ko
+#fi
+
+#if [ -f $DEST/drivers/gspca_zc3xx.ko ]; then
+#      insmod $DEST/drivers/gspca_zc3xx.ko
+#fi
+
+加载新驱动
+if [ -f $DEST/drivers/uvcvideo.ko ]; then
+        insmod $DEST/drivers/uvcvideo.ko
+fi
+
+2.3	去掉初始化参数加密功能
+2.4	考勤记录查询功能
+1.	主要是对内存占用不合理优化处理。根据现有的考勤记录在查询时，内部占用了4MB的内存用于记录查询，在目前现内存不是很充足的情况下，另根据此功能不经常使用，因此对此功能进行了修改：
+a)	在比对通过后，按MENU键查询时，最多只支持查询30条记录的查询。按正常情况一般用户不会在一天中产生30条考勤记录。
+b)	通过记录查询菜单查询考勤记录时，最多支持186(31*6,一个用户一个月最多有186记录)条记录的显示。对于不输入ID记录查询时，最多也支持186条考勤记录的查询。对于此功能在客户平常使用中也都会输入特定的工号来查询。
+
+2.5	用户浏览功能
+1.	主要是优化对内存临时占用的处理与加快显示速度。原用户浏览时，是先分配一段内存，然后从文件中读取用户到内存，在显示时，然后把内存中的数据加载到控件上显示，从而增加了显示数据的时间。
+2.	去掉了在显示时，删除不正确用户编号用户的功能. 此功能在技术人员不是特别注意的情况下，会造成认为PUSH SDK或者脱机SDK上传的用户错误问题，如果用户的编号长度是10位，但是PIN2Width的为9位，这时PUSH SDK成功上传后，再浏览用户时，内部会删除，长度超过PIN2Width宽度的用户，这时会误以为PUSH SDK上传数据错误码。使用中会造成不正确用户编号指的是：
+?	用户编号的长度为0
+?	用户编号的值为字符串0
+?	用户编号的长度超过规定的PIN2Width。
+2.6	考勤记录保存成功以后，显示验证界面
+2.7	U盘上传宣传图片功能
+优化了在内存不是很充足的情况下，不能通过U盘上传宣传图片功能
+2.8	U盘用户导入速度优化
+加快了通过U盘导入用户信息与指纹模板时的速度。
+2.9	wifi连接连接方式改进
+1.	新wifi模块，对于wifi连接参数的设置，改变了以前需要选择加密方式等等。现改为只需要搜索到Wifi路由器信息后，输入密码即可连接。
+2.	对于zem800/600核心板，固件内部采用单独的线程来进行wifi的连接与检测。
+3.	更新wifi相关文件：rt73.ko，rt73.tgz
+4.	参数
+WIFI=1			//1-打开wifi功能， 0-关闭wifi
+WifiModule=1 	//1-使用新wifi模块，并以线程方式来进行wifi的连接。0-支持老wifi的连接。
+	
+脚本修改：
+if [ -f $DEST/drivers/wifi/rt73.ko ]; then
+        insmod $DEST/drivers/wifi/rt73.ko
+fi
+
+if [ -f $DEST/drivers/wifi/rt73.tgz ]; then
+        rm /etc/rt73* -f && tar xvzf $DEST/drivers/wifi/rt73.tgz -C /etc/ && sync
+        cp /etc/rt73.bin /lib/firmware -f && sync
+fi
+
+Wifi更新方式
+老wifi模块，新驱动，可更新rt73.ko，rt73.tgz,且WifiModule=0
+新wifi模块，新驱动，可更新rt73.ko，rt73.tgz,且WifiModule=1
+2.10	3G/GPRS
+1.	对于3G/GPRS现以动态链接库的方式来处理。
+2.	固件支持以线程模式（ZEM600/ZEM800）和进程模式方式支持3G/GPRS的连接
+3.	参数
+GPRS参数配置(ZEM510,ZEM515,ZEM560,ZEM565)
+ModemModule=1  // 1- Wavecom, 2-EM560(中国移动), 3-EM660（中国电信）, 4-EM770（中国联通）
+~MODEM=2			//0-关闭GPRS/3G功能，2-打开GPRS/3G功能ConnectMODEM=1 //0-禁用GPRS/3G功能， 1-使用GPRS/3G功能
+APN=cmnet
+ModemUserName=gprs
+ModemPassword=gprs
+ModemDialNumber=*99***1#
+HeartBeatServer=x.x.x.x  //3G/GPRS心跳包服务器IP，设为公网IP，通过设为iclock server服务器的IP
+CommandSerialPort=/dev/ttyS3 //通信串口，不对的核心板其值不能 
+DataSerialPort=/dev/ttyS3		//通信串口，不对的核心板其值不能
+
+GPRS参数配置(ZEM600,ZEM800)
+ModemModule=1  // 1- Wavecom, 2-EM560(中国移动), 3-EM660（中国电信）, 4-EM770（中国联通）
+~MODEM=2			//0-关闭GPRS/3G功能，2-打开GPRS/3G功能ConnectMODEM=1 //0-禁用GPRS/3G功能， 1-使用GPRS/3G功能
+APN=cmnet
+ModemUserName=gprs
+ModemPassword=gprs
+ModemDialNumber=*99***1#
+HeartBeatServer=x.x.x.x  //3G/GPRS心跳包服务器IP，设为公网IP，通过设为iclock server服务器的IP
+CommandSerialPort=/dev/ttyS0 //通信串口，不对的核心板其值不能 
+DataSerialPort=/dev/ttyS0		//通信串口，不对的核心板其值不能
+
+3G参数配置(ZEM600,ZEM800) 
+ModemModule=4	// 1- Wavecom, 2-EM560(中国移动), 3-EM660（中国电信）, 4-EM770（中国联通）
+~MODEM=2		//0-关闭GPRS/3G功能，2-打开GPRS/3G功能
+ConnectMODEM=1 //0-禁用GPRS/3G功能， 1-使用GPRS/3G功能
+APN=3gnet
+ModemUserName=card
+ModemPassword=card
+ModemDialNumber=*99#
+HeartBeatServer=x.x.x.x  //3G/GPRS心跳包服务器IP，设为公网IP，通过设为iclock server服务器的IP
+CommandSerialPort=/dev/ttyUSB2
+DataSerialPort=/dev/ttyUSB0
+
+常用接入点拨号设置（以中国为例），注：注意字母大小写
+Wavecom	EM560中国移动TDS-CDMA	EM660中国电信CDMA	EM770中国联通WCDMA
+APN=cmnet	APN=cmnet	APN=	APN=3gnet
+ModemDialNumber=*99***1#	ModemDialNumber=*99#	ModemDialNumber=#777	ModemDialNumber=*99#
+ModemUserName=gprs	ModemUserName=gprs	ModemUserName=card	ModemUserName=card
+ModemPassword=gprs	ModemPassword=gprs	ModemPassword=card	ModemPassword=card
+
+增加文件：
+pppd, chat文件存放到/mnt/mtdblock/data目录下
+
+auto.sh(ZEM600, ZEM800,ZEM510,ZEM515)或者nand(ZEM560, ZEM565)脚本修改:增加如下脚本。
+ln -s $DEST/lib/libmodem.so /lib/libmodem.so –f
+
+if [ -f $DEST/data/chat ]; then
+        ln -s $DEST/data/chat /usr/sbin/chat -f
+fi
+
+if [ -f $DEST/data/pppd ]; then
+        ln -s $DEST/data/pppd /usr/sbin/pppd -f
+fi
+
+rm /var/run/ppp* -rf
+if [ ! -c /dev/ppp ]; then 
+mknod /dev/ppp c 108 0 
+fi
+
+4.	3G/GPRS成功连接后显示方式：
+模块	连接成功图标	
+Q24PL(Wavecom, gprs)	绿色G	
+EM560(华为3G模块)	绿色T 	TDSCDMA制式，中国移动使用
+EM660(华为3G模块)	绿色E	EVDO制式，中国电信使用
+EM770(华为3G模块)	绿色W	WCDMA制式，中国联通使用
+
+2.11	ZEM600,ZEM 800固件统一
+此处所说的固件统一是指编译出来的固件同时支持ZEM600与ZEM800平台。
+参数设置：
+ZEM800Platform=1 //zem800的核心板此参数设为1，其它核心板设为0.固件默认设为1.
+注：ZEM600与ZEM800平台相关驱动不能互换。
+2.12	固件U盘升级失败时增加错误代码显示
+错误代号意思如下：
+错误编号	说明
+-1	打开emfw.cfg文件失败
+-2	升级包校验错误
+-3	升级固件版本不正确
+-4	升级包加密方式错误
+-5	执行system错误
+-6	升级参数失败
+-7	分配内存失败
+2.13	大容量考勤记录下载
+SDK版本需要在6.2.4.0及以上版本。
+在内存比较充足的情支持一次性下50万条考勤记录的下载（TCP通讯），其固件到SDK的通讯时间约2分钟。
+如果启用了下载最新考勤记录功能的话，不支持该功能。
+	
+
+3	BUG修改
+3.1	修改当删除所有用户信息时机器自动重启
+现象描述：当打开iclock server(push)功能后,当删除所有用户信息时机器重启。其重启的目的是内存清理
+3.2	修改外接响铃延时问题
+现象描述：当ExAlarmDelay小于13时，无法触发外接响铃。
+3.3	修正SDK机器重启问题
+现象描述：
+1．在3200枚指纹情况，zem510,zem515或者zem565的机器，再支持tts,webserver的功能情况下,通过webserver或者SDK发送重启命令时，机器不能重启。
+2．当考勤软件发送重启命令时，固件没有发送返回命令，造成考勤软件长时间无响应问题
+3.4	修正阿拉伯语和波斯语界面，界面设置->拍照模式处显示异常
+现象描述：在打摄像头功能后，拍照模式文字显示位置不正确。
+3.5	修正当开启DHCP时未能获取IP时不退出，造成机器不能正常工作
+3.6	修正泰语/繁体中文语言环境下,用户姓名、与短消息显示问题
+现象描述：
+1.	通过脱机sdk 上传用户名至机器，在机器上编辑用户信息后保存，用户名显示乱码；
+2.	通过脱机sdk上传的短消息，在短消息浏览和分发界面显示正常，主界面显示公共短消息和个人短消息为乱码。（上传的用户名与短消息内容均为泰语或者繁体）
+3.7	修正了门禁管理参数窗口内部内存访问越界
+现象描述：当高级门禁功能打开后，在门禁设置->门禁管理参数菜单中数组内存访问越界
+3.8	修正组验证方式的BUG
+现象描述：
+
+当参数设~LockFunOn=15，~UserExtFmt=1时
+	当关闭摄像头（CameraOpen=0）时，
+	进入菜单-用户管理-管理用户-按MENU键选择“用户门禁”，验证方式默认显示为“组验证方式”
+	当开启摄像头（CameraOpen=1）时，
+	进入菜单-用户管理-管理用户-按MENU键选择“用户门禁”，验证方式默认显示为“FP/PW/RF”，必须一个一个用户设置成“组验证方式”，才可以使用组验证方式。
+3.9 修正有时退出用户浏览界面时，出现蓝屏现象。
+3.10 修改U盘升级参数时，当提示升级成功后，突然断电时可能造成不能升级成功问题。
+
+4	其它修改
+4.1	固件内部秒事件代码统一
+受影响的功能有：
+准点时间同步
+关机
+定时响铃
+夏令时
+定时状态转换
+短消息
+门禁报警功能
+4.2	固件内部空闲PIN值分配与内存优化。
+受影响的功能有：用户的增加、删除，包括U盘导入用户、SDK上传用户、PUSH SDK下发用户到机器。
+4.3	其它内存使用与考勤验证优化
+4.4 优化当新增用户时，生成PIN2的速度与内存使用。
+
+
+
+
+
+******************************************************************
+**提交日期:2011年5月18日
+**提交者:dsl
+**主要目的:为工作做映象
+** 	
+**版本号：Ver 6.4.1(build 97)
+**备注：
+	1:可以通过参数名BuildVersion来读取build版本号。
+******************************************************************
+**提交日期:2011年5月9日
+**提交者:dsl
+**主要目的:为工作做映象
+** 	
+**版本号：Ver 6.4.1(build 96)
+**备注：
+	1:增加通过参数来旋转屏.关于旋转参数请看系统平台提供的资料
+	2:在打FORFACTORY宏定义时:
+		a:当打开dhcp功能时，可以自动生成mac地址，以方便生产初始化
+		b:支持上传文件到mtdblock目录下。
+		c:按esc菜单时，显示指纹测试窗口，以方便生产测试指纹头是否能正常工作。
+	
+******************************************************************
+**提交日期:2011年5月5日
+**提交者:dsl
+**主要目的:zem800切换
+** 	
+**版本号：Ver 6.4.1(build 95)
+**备注：
+	主要解决的在切换zem800时一些问题。详细如下：
+	1：iclock360机器U盘功能不能用（已解决）
+	2：iclock360设置夏令时时，结束时间不能在同一月份日期的后面，否则算输入不合法！（已解决）
+	A:请注意：夏令时的结束时间不能小于开始时间，按你所输入的时间显示合法是正确的提示。正确的输入如下（例）：
+	不跨年时间输入
+	04-01 00:00
+	08-01 00:00
+
+	跨年时间输入
+	04-01 00:00
+	03-01 00:00
+
+	错误的时间输入：
+	04-05 00:00
+	04-01 00:00
+
+	04-01 02:00
+	04-01 03:00
+	3：iclock360设置了管理员进入自动检测—>采集处测试指纹有声音发出！（zem600也有）（已解决）
+	A:已修改
+	4：iclock360机器在网关地址输入255后就不能设置下一次地址！(ZEM600也有)（忽略）
+	A：对于IP，网关，DNS地址的第一个域其正常的范围为：1-223。在按左右键时会检测范围。该问题可以忽略。
+	5：iclock360 3.5寸屏机器当网络速率为100M速率时，机器连接不了！（经验证无此问题）
+	A:经测试没有发现此情况。
+	6：iclock360 3.5寸屏机器设置了指纹管理员，进入自动检测—>实时时钟测试，对比电脑时钟，机器上秒表走得明显要慢！（用ver 6.4.1(build94)固件，问题仍然存在）
+	A：那个只是测试RTC是否能正常读取。
+	A：已修改，其原理是现在的zem800速度很快，系统平台部没有校准MiniGUI Timer控制的嘀嗒单位值，所以造成不准情况.
+	7：iclock360 3.5寸屏机器时钟延时不太正确！（zem600也有）（忽略）
+	A:在某种情况下可能存在延时不准确情况，不需要太过于计较这些。
+	8：开始没有说语言谢谢！（已更新过映像，问题依然存在）
+	A:这是映象中没有增加Playwav文件，请更新最新的映象。
+	9：开机时到加载启动logo时的等待时间过长！（比zem600的机器长大概5秒）（已更新过映像，问题依然存在）
+	10：开机后加载logo的时候指示灯不亮，zem600的机器开机加载logo的时候会一直亮红灯！（已解决）
+	A：以上两个问题为映象问题
+	11：在主界面比对成功后按menu键会出现考勤记录框，在这里打指纹会发生响声！（已解决）
+	12：更新最新固件后（ver 6.4.1(build93)）新增用户登记指纹时没有“嘟、嘟、嘟”的提示音了！（已解决）
+	A:已修改.这个问题由于修改问题11而引起的。因此在Fpwindow.c文件中的ProcessEnroll函数的最开始处增加了ExBeep(1);
+
+	13.可以查看wifi信号，但不能正常连接
+	A：已修改。其原因是：执行system(“ifconfig rausb0”)不能正常反回EXIT_SUCCESS(0)值，所以系统认为不能无线网卡，
+	但实际上在固件启动时执行的system(“ifconfig rausb0 up”)是可以正常返回EXIT_SUCCESS的。
+	因此在utils.c, utils.h增加了set_wifi_rausb0_flag函数来告诉connect_wifi函数，无线网卡工作正常。
+	另外，请把udhcpc文件放到/mnt/mtdblock目录下，该文件为dhcp的客户端。
+
+******************************************************************
+**提交日期:2011年4月29日
+**提交者:
+**主要目的:照片旋转保存
+** 	
+**版本号：Ver 6.4.1(build 92)
+**备注：（只在ZEM600下支持）
+	主要解决的问题如下：
+	1、拍照用户照片，将生成的照片旋转90度后重新保存
+	2、拍照考勤照片，将生成的照片旋转90度后重新保存
+******************************************************************
+**提交日期:2011年04月02日
+**提交者:
+**主要目的:完善功能
+** 	
+**版本号：Ver 6.4.1(build 91)
+**备注：
+	主要解决的问题如下：
+	1、合并svn://192.168.1.166/iclock400mul-510/tags/20101228_iclock400mul-510代码下修改过的bug，具体如下：
+	   a、泰语界面状态键在主界面显示不齐，超出状态键显示框范围；
+	   b、对~SerialNumber、~OEMVendor、~AlgVer、~DeviceName、~ProductTime参数进行了加密；
+	   c、修改设置时，管理记录增加10几条问题；
+	   d、3寸小彩屏简单门禁bug，gOptions.LockFunOn=1；
+	   e、解决小U盘不能识别问题，修改固件，兼容以前挂载U盘方式；
+	   f、3寸ZEM560平台，U盘上传、下载考勤照片提示失败问题；
+	   g、更新小彩屏8国主流语言文件，主要解决乱码问题；
+	   h、解决与旧固件PUSH功能下载指纹模板不兼容问题，即使用Ver 6.4.1(build 69)以前旧固件版本上传到服务器的指纹模板，无法使用最新固件下传到机器设备上；
+	   i、修改Makefile文件，支持3寸zem600平台的编译，即此固件使用在3寸zem800平台上；
+	   j、修改验证界面使用MSG_TYPE_TIMER定时器。
+******************************************************************
+**提交日期:2010年12月22日
+**提交者:
+**主要目的:完善功能
+** 	
+**版本号：Ver 6.4.1(build 75)
+**备注：
+	主要解决的问题如下：
+	1、合并FAEbug
+	2、3寸彩屏zem510，修改升级LOGO接口
+	3、3寸小彩屏短消息功能bug
+	4、修改挂载U盘bug
+******************************************************************
+**提交日期:2010年12月13日
+**提交者:
+**主要目的:完善功能
+** 	
+**版本号：Ver 6.4.1(build 74)
+**备注：
+	主要解决的问题如下：
+	1、非卡机情况下不使用指纹头，查询考勤记录死机问题
+	2、3寸屏，当强制1:1时，按ESC要按两次才能退出
+	3、修改参数加密功能，新的方案：限制老的PBC修改参数软件，新的PBC软件做成需要在PC上需要许可和有效期，若使用新的PBC软件
+   所有参数均可更改。
+******************************************************************
+**提交日期:2010年12月07日
+**提交者:
+**主要目的:完善功能
+** 	
+**版本号：Ver 6.4.1(build 73)
+**备注：
+	主要解决的问题如下：
+	1、完善参数加密功能、SDK升级U盘升级包功能
+	2、修改串口传输丢数据bug
+	3、修改gprs初始化modem接口，增加流控参数控制
+	4、合并bug，SaveOptions函数没有初始值，导致写参数乱码问题
+	5、只支持中文固件，在登记指纹时实现快速登记
+******************************************************************
+**提交日期:2010年11月29日
+**提交者:
+**主要目的:完善功能
+** 	
+**版本号：Ver 6.4.1(build 72)
+**备注：
+	主要解决的问题如下：
+	1、接MF读头且打开多种验证方式，查看考勤记录死机问题
+	2、完善ADMS设置服务器功能
+	3、外接面部识别仪，减少读串口延时
+******************************************************************
+**提交日期:2010年11月18日
+**提交者:
+**主要目的:完善功能
+** 	
+**版本号：Ver 6.4.1(build 71)
+**备注：
+	主要解决的问题如下：
+	1、增加通过SDK升级U盘升级包"emfw.cfg"
+	2、修改后门“8888”用户问题
+	3、修改登记胁迫指纹问题
+******************************************************************
+**提交日期:2010年11月16日
+**提交者:
+**主要目的:完善功能
+** 	
+**版本号：Ver 6.4.1(build 70)
+**备注：
+	主要解决的问题如下：
+	1、修改设置ADMS服务器可设置域名
+******************************************************************
+**提交日期:2010年11月13日
+**提交者:
+**主要目的:
+** 	
+**版本号：Ver 6.4.1(build 69)
+**备注：
+	主要解决的问题如下：
+	1、添加简单门禁
+******************************************************************
+**提交日期:2010年10月29日
+**提交者:
+**主要目的:
+** 	
+**版本号：Ver 6.4.1(build 69)
+**备注：
+	主要解决的问题如下：
+	1、增加RS232/485参数控制功能
+******************************************************************
+**提交日期:2010年10月21日
+**提交者:
+**主要目的:
+** 	
+**版本号：Ver 6.4.1(build 69)
+**备注：
+	主要解决的问题如下：
+	1、TTS整点报时功能与闹铃冲突导致死机
+******************************************************************
+**提交日期:2010年10月21日
+**提交者:
+**主要目的:
+** 	
+**版本号：Ver 6.4.1(build 69)
+**备注：
+	主要解决的问题如下：
+	1、增加DNS界面设置使用IsSupportDNS参数控制
+	2、合并修改过的bug
+	   a、在1:1比对界面刚开始可以输入0
+	   b、1:1比对声音奇怪问题
+	   c、1:1比对达到限制的重复次数，继续打指纹仍可进行1:1比对且无语言提示
+******************************************************************
+**提交日期:2010年10月19日
+**提交者:
+**主要目的:
+** 	解决管理权限问题
+**版本号：Ver 6.4.1(build 68)
+**备注：
+	主要解决的问题如下：
+	1、解决U盘上传有管理权限用户但没有验证方式的问题
+******************************************************************
+**提交日期:2010年10月15日
+**提交者:
+**主要目的:
+** 	3寸彩屏支持T9输入短消息
+**版本号：Ver 6.4.1(build 67)
+**备注：
+	主要解决的问题如下：
+	1、3寸彩屏支持T9输入短消息
+******************************************************************
+**提交日期:2010年10月11日
+**提交者:曾瑞锐
+**主要目的:
+** 	整合FAE反馈问题和最新修改的bug
+**版本号：Ver 6.4.1(build 66)
+**备注：
+	主要解决的问题如下：
+	1、解决zem600闹铃时按键没反应，不能中断闹铃问题;
+	2、解决错误工号连续比对时出现黑屏问题；
+	3、解决编辑用户管理权限时，无验证方式也能保存问题；
+	4、超级管理员登录后，在用户管理中，不能将自己修改成登记员；
+	5、清空ADMS服务器上设备数据后重新上传该设备数据，考勤记录不能保存；
+	6、解决面部识别时，远程连接蓝屏；
+	7、修改服务器地址设置界面(Web Setup),当不需要设置代理服务器时隐藏相关输入框。
+
+	更改涉及文件：
+	1、main.c  exfun.c
+	2、ssrvfwin.c
+	3、usermng.c
+	4、usermng.c
+	5、iclock/pushapi.c
+	6、msg.c
+	7、ssrweb.c
+******************************************************************
+** 提交日期：2010年10月09日
+** 提交者：
+** 主要目的：修改3寸屏zem560升级logo问题
+**		
+** 版本号：Ver 6.4.1(build 65)
+** 
+** 解决问题：
+	1、修改3寸屏zem560升级logo升级不成功问题
+	2、SDK对小彩屏进行写屏操作时，增加按ESC退出功能
+	3、修改U盘升级固件提示升级失败问题
+****************************************
+**提交日期：2010年9月17日
+**提交者：曾瑞锐
+**主要目的：
+	合并新版PUSH SDK到主流代码
+**备注：
+	主要解决的问题如下：
+	1、更改PUSH SDK为新版的so库模式，去掉原iclock目录的文件，添加pushapi.c和pushapi.h文件；添加pushsdk库文件libhttppush.so
+	2、去掉UploadPhoto和IsUploadPhotoOnly参数，不再使用这两个参数
+
+	更改涉及的文件:
+	main.c			./gprs/gprs.c
+	flashdb.c		./zem600/zem600.c
+	flashdb.h		./zem510/zem510.c
+	strutils.c		./zem560/zem560.c
+	strutils.h		gridview.c
+	ssrvfwin.c		ssrweb.c
+	commu.c		utils2.c
+	DelUserWindow.c	flashdb2.h
+	flashdb2.c		options.h
+	options.c		ssrsystem2.h
+*******************************************************************
+** 提交日期：2010年9月15日
+** 提交者：
+** 主要目的：
+	3寸支持2.6内核
+** 备注：
+	
+** 解决问题：
+	1、修改夏令时时间限制，当设置结束时间大于开始时间时需至少间隔一个小时
+	2、软件传输短消息，需通过参数SMSCount进行限制，函数FDB_AddSms
+	3、10.0算法指纹机初始化BIOKEY失败即句柄fhdl为0，编辑用户时按ESC提示是否保存选择否导致死机
+	4、SDK发送CMD_RTLOG_RRQ命令获取机器的实时事件缓存导致死机，经分析如果实时事件缓存超过27个大于网络发送的字节数（27*38+12>1032），数组越界导致死机
+	5、2.6内核下执行system("ifconfig rausb0")失败问题
+	6、1：1指纹比对时，输入不存在工号不按OK键直接按指纹，先提示ID号错误，接着提示请重按手指问题
+	7、修改wifi模式WPA2PSK，已调通
+	8、修改查询考勤记录死机问题，更改：申请4M空间不成功时就申请2M，在不成功时申请1M，还不成功时就无法查询考勤记录
+	9、2.6内核挂载U盘方式
+	10、合并主流修改过的bug
+****************************************
+** 提交日期：2010年5月11日
+** 提交者：王伟
+** 主要目的：修改多国语言存在的问题
+**		1,阿拉伯语在某些某些界面显示不全或显示不正确的问题
+**		2,泰语考勤后按Muen查看考勤记录死机的问题
+** 版本号：Ver 6.4.1(build 47)
+** 更改文件为：
+** logquery.c  ssrsystem1.c ssrcgroupmng.c main.c ssrsystem3.c  ssrstkey.c
+** 
+** SVN  -r 1264
+****************************************
+** 提交日期：2010年05月04日
+** 提交者：王伟和程新平
+** 主要目的：合并解决SDK问题到主流代码中去，
+** 版本号：
+** 更改文件为：
+备注： 并没有释放代码
+
+1、2752问题：UseGroupTimeZone接口不合理问题。
+问题原因：在固件中定义的时候默认的就是使用组的时候为1，自定义的时候为0
+解决方法：修改固件
+在commu.c文件processCommand函数的
+case CMD_USERTZ_RRQ:
+下面修改代码：
+if(FDB_GetUser(get_unaligned((U16*)p), &tu)!=NULL)
+			{
+				len+=8;
+				if (tu.TimeZones[0]==0)  //add by cxp at 2010-04-21
+					tu.TimeZones[0]=1;
+				else
+					tu.TimeZones[0]=0;
+				memcpy(p, (void*)&tu.TimeZones, 8);
+		}
+说明：最后决定不改
+2、问题2761：
+问题原因：固件中定义的时候就是自动适应对应的就是2
+解决方法：修改的时候只要在获取的时候为2就该为8，
+设置的时候为8的时候就改为2。
+修改代码如下：
+case CMD_OPTIONS_RRQ:下面修改代码段
+		else
+{
+				strcpy(value,p+l+1);
+				temp=atoi(value);
+				printf("get options ....p=%s,value=%s,temp=%d\n",p,value,temp);
+				//add by cxp
+				if(strcmp(name,"HiSpeedNet")==0)
+				{
+					printf("here arrived..\n");
+					if (temp==2)
+					{
+						temp=8;
+						sprintf(value,"%d",temp);
+						strcpy(p+l+1,value);
+					}
+				}
+				//add end
+				len+=i;
+			}
+3、2779删除指纹的时候会删除全部的问题
+问题原因：在删除的时候调用的函数出错，改为使用删除所有的函数
+解决方法：
+固件修改
+Processcommand函数
+case CMD_DELETE_USERTEMP:行修改
+i=FDB_DelTmp(user.PIN,p[2]); //changed by cxp at 2010-04-16
+
+4、2787问题 宣传照片对于大于30K的图片可以显示但是删除的时候没有显示问题。
+问题原因：在删除的时候查询的时候默认对大于30K的图片做了屏蔽，但是在显示的时候却没有做屏蔽
+解决方法：在显示的时候采取同样的措施，屏蔽掉大于30K的图片
+固件修改：在updatepic.c的函数GetPic部分修改
+char temp[256];
+        FILE *fp;
+        int i;
+struct stat picsize; //changed by cxp
+
+
+stat(temp, &picsize);  //changed by cxp at 2010-04-17
+        //printf("Picture size = %d\n", picsize.st_size);
+		if(picsize.st_size>PIC_SIZE_LIMIT)
+		{
+			//printf("Picture size err!\n");
+			fclose(fp);
+			continue;
+}
+5、2762问题，发送重启的时候机器会重启但是会受到 -2 error
+问题原因：机器在接受到命令的时候立马执行重启命令，而没有发送ACK数据回复
+解决方法：在执行重启的时候重新开一个进程执行重启，另一个进程发送回复数据
+	固件修改：
+			pid_t pid=-1;
+			if ((pid=fork())==0)  //changed by cxp at 2010-04-20
+			{
+				sleep(2);
+				ExSetPowerOnTime(gCurTime.tm_hour, gCurTime.tm_min);
+				DelayMS(10);
+				ExPowerRestart();
+				RebootMachine();
+			}
+6、2764问题，发送修改IP的时候机器会修改成功但是会受到 -2 error
+问题原因：机器在接受到命令的时候立马执行IP修改命令，由于IP更换，对方收不到回复
+解决方法：在执行设置Ip的时候重新开一个线程执行修改IP，另一个线程发送回复数据
+固件修改：
+case CMD_OPTIONS_WRQ:下面修改代码
+		pthread_t pid;
+		int err;
+//zsliu 设置不需要重启即刻生效
+		if (strcmp(p, "IPAddress")==0)
+		{
+			err=pthread_create(&pid,NULL,ChangeIPAddress,(void *)value); //changed by cxp at 2010-04-22
+			if (err!=0)
+						printf("can't create thread...\n");
+		}
+				//zsliu end
+	void * ChangeIPAddress(void *arg) //add by cxp at 2010-04-22
+{
+		sleep(5);
+		char *value;
+		char c1[16],c2[16],c3[16],c4[16];
+		value=arg;
+		if(ParseIP(value,c1,c2,c3,c4))
+		{
+			gOptions.IPAddress[0]=atoi(c1);
+			gOptions.IPAddress[1]=atoi(c2);
+			gOptions.IPAddress[2]=atoi(c3);
+			gOptions.IPAddress[3]=atoi(c4);
+		}
+				 printf("ip1=%d.%d.%d.%d..\n",gOptions.IPAddress[0],gOptions.IPAddress[1],gOptions.IPAddress[2],gOptions.IPAddress[3]);
+		SaveStr("IPAddress",value,TRUE);
+		pthread_exit(NULL);
+}
+7、2788问题，获取DoorStatus的时候一直返回close
+问题原因：获取门状态的函数内部代码有问题
+解决方法： 修改函数内部代码
+固件修改：
+修改exfun.c文件里面ExGetIOStatus函数内容为：
+		int ret=0;
+	int DoorSensor=0;//checkDoorState();
+	int mcuVersion=GetMCUVersion();
+	printf("\n================ mcuVersion=%d\n\n",mcuVersion);
+	if(mcuVersion < 11 )
+		return -1;
+	DoorSensor=GetDoor_Sensor();
+	if (DoorSensor==2)
+	{
+		DoorSensor=0;
+	}
+	DoorSensor = !DoorSensor;
+	DoorSensor=DoorSensor&0x1;
+	ret=DoorSensor;
+
+	return ret;
+ 
+8、2790问题，清空卡的时候提示成功，但是其实没有执行任何操作
+问题原因： 执行清空卡部分代码没有写
+解决方法： 修改函数内部代码
+固件修改：
+(1)、完善ProcessEmptyCard函数
+	int ProcessEmptyCard()
+{
+		EmptyCard();
+		return 0;
+}
+extern HWND MFCardWnd;
+void EmptyCard()
+{//add by cxp at 2010-04-20
+	int refreshflag = 1;
+#ifndef ZEM600
+    	KillTimer(hMainWindowWnd,IDC_TIMER);
+#else
+	EnableMsgType(MSG_TYPE_TIMER, 0);
+#endif
+    SwitchMsgType(0);
+    gDesktop.flage = STATE_NORMAL;
+    asmsflag=1;
+    smsindex=0;
+    menuflag=1;
+
+ 	if (MFCardWnd!=HWND_INVALID)
+    {
+        refreshflag = 0;
+        SendMessage(MFCardWnd, MSG_CLOSE, 0, 0);
+    }
+	CreateMFCardWindow(hMainWindowWnd, 2);
+	menuflag=0;
+    if (refreshflag)
+    {
+#ifndef ZEM600
+                SetTimer(hMainWindowWnd,IDC_TIMER,100);
+#else
+		EnableMsgType(MSG_TYPE_TIMER, 1);
+#endif
+        menuflag=0;
+        SwitchMsgType(1);
+        ShowMainLCD(hMainWindowWnd);
+		//zsliu
+		SendMessage(HWND_DESKTOP,MSG_PAINT,0,0);
+		ShowMainLCDDelay=1;
+
+    }
+}
+8、2790问题，写卡的时候提示成功，但是其实没有执行任何操作
+问题原因： 执行写卡部分代码没有写
+解决方法： 修改函数内部代码
+固件修改：
+(1)、完善ProcessWriteCard函数
+int ProcessWriteCard(char *a,int *pin,int *writelen)
+{
+	WriteCard(a,*pin,*writelen);
+	return 0;
+}
+extern TFPCardOP tmpFPCard;
+extern U8 TMPBUF[10240];
+//extern  int PackTemplate(U8 *Temp, U8 *Templates[], int TempCount, int ResSize);
+void WriteCard(char *buffer,U32 PIN, int writelen)
+{//add by cxp at 2010-04-20
+	int refreshflag = 1;
+	int pin,fingerindex,tmplen,i,j;
+	TUser u;
+	char *tmp,tmplate[1024];
+	TZKFPTemplate temp;
+	char tmps[4][1024];
+	TBuffer *Buffer;
+	Buffer=(TBuffer *)(buffer);
+	tmp=Buffer->buffer;
+#ifndef ZEM600
+    KillTimer(hMainWindowWnd,IDC_TIMER);
+#else
+	EnableMsgType(MSG_TYPE_TIMER, 0);
+#endif
+	SwitchMsgType(0);
+	gDesktop.flage = STATE_NORMAL;
+	asmsflag=1;
+	smsindex=0;
+	menuflag=1;
+	printf("write card init data ....\n");
+	if (gOptions.PIN2Width<=5)
+	{
+		pin=*(WORD*)(Buffer->buffer);
+		if (FDB_GetUser(pin,&u)==NULL)
+		{
+			u.PIN=pin;
+			sprintf(u.PIN2,"%d",pin);
+			FDB_AddUser(&u);
+		}
+
+		tmp=tmp+2;
+
+	}
+	else
+	{
+		pin=*(int*)(Buffer->buffer);
+		if (FDB_GetUserByPIN2(pin,&u)==NULL)
+		{
+			u.PIN=0;
+			sprintf(u.PIN2,"%d",pin);
+			FDB_AddUser(&u);
+		}
+		tmp=tmp+4;
+	}
+	tmpFPCard.Templates=TMPBUF;
+	tmpFPCard.OP=OP_WRITE;
+
+	tmpFPCard.PIN=pin;
+	memset(tmpFPCard.Finger, 0xFF, 4);
+	for (i=0;i<4;i++)
+	{
+		tmplen=*(WORD*)(tmp+3*i);
+		printf("write card  i=%d, tmplen=%d...\n",i+1,tmplen);
+		if (tmplen>0)
+		{
+			fingerindex=tmp[2+3*i];
+			memcpy(tmplate,tmp+3*4,tmplen);
+			FDB_CreateTemplate((char*)&temp, (U16)pin, (char)fingerindex, tmplate, tmplen,1);
+
+			memcpy(tmps[i], temp.Template, temp.Size);
+			tmpFPCard.Finger[i]=fingerindex;
+			if(i>=gOptions.RFCardFPC) break;
+		}
+	}
+
+	if(i>0)
+	{
+		char *(t[4]);
+		t[0]=tmps[0];t[1]=tmps[1];t[2]=tmps[2];t[3]=tmps[3];
+		tmpFPCard.TempSize=PackTemplate(tmpFPCard.Templates,t, i, MFGetResSize()-8);
+	}
+	else
+		return 0;
+	if (MFCardWnd!=HWND_INVALID)
+	{
+		refreshflag = 0;
+		SendMessage(MFCardWnd, MSG_CLOSE, 0, 0);
+	}
+	CreateMFCardWindow(hMainWindowWnd, 4);
+	menuflag=0;
+	if (refreshflag)
+	{
+#ifndef ZEM600
+        SetTimer(hMainWindowWnd,IDC_TIMER,100);
+#else
+		EnableMsgType(MSG_TYPE_TIMER, 1);
+#endif
+		menuflag=0;
+		SwitchMsgType(1);
+		ShowMainLCD(hMainWindowWnd);
+		//zsliu
+		SendMessage(HWND_DESKTOP,MSG_PAINT,0,0);
+		ShowMainLCDDelay=1;
+
+    }
+}
+(3)、修改MFCardwin.c文件
+Mfcardwinproc函数
+case MSG_TYPE_MF:
+下面添加：
+case CopyOnLine:
+				{
+					gMachineState=STA_WRITEMIFARE;
+				ShowOptHint(hWnd, LoadStrByID(HID_DOWNLOADING_DATA),1);
+					ExLightLED(LED_RED, FALSE);
+					ExLightLED(LED_GREEN, FALSE);
+					if(tmpFPCard.OP==OP_WRITE)
+					{
+						if(gMFOpened)
+							i=MFWrite(&tmpFPCard);
+						else if(giCLSRWOpened)
+							i=iCLSWrite(&tmpFPCard);
+					}
+#ifdef ZEM500
+						if(gMachineState==STA_WRITEMIFARE)
+#endif
+						gMachineState=OldState;
+						FDB_AddOPLog(ADMINPIN, OP_MF_CREATE, tmpFPCard.PIN, i, 0, 0);
+				}
+				break;
+
+	
+****************************************
+** 提交日期：2010年4月20日
+** 提交者：王伟
+** 主要目的：添加通过PUSH-SDK下载考勤照片功能。
+** 版本号：Ver 6.4.1(build 46)
+** 更改文件为：
+** flashdb.h flashdb.c gridview.c libcam.h(排版的问题)，options.h options.c
+** ssrvfwin.c ./iclock/checklog.c ./iclock/http.c ./iclock/iclok.h ./iclock/iclockprx.c
+** SVN  -r 1158
+
+****************************************
+提交日期：2010-04-12
+提交者：刘振树
+主要目的：解决俄语状态显示的问题
+版本号：Ver 6.4.1(build 45)
+
+备注：
+	解决俄语状态显示的问题
+	main.c 函数static int procmainstatekey(HWND hWnd,int index1)
+	更改 TextOut(hdc,x+(130-strlen((char *)temp)*8)/2,y+8,(char *)temp);
+	为TextOut(hdc,x+(130-strlen((char *)mystkey.stateName)*8)/2,y+8,(char *)temp);
+
+****************************************
+提交日期：2010-04-09
+提交者：刘振树
+主要目的：解决ADMS上传一定用户数后不再上传的问题
+版本号：Ver 6.4.1(build 44)
+
+具体更改部分：
+	解决ADMS上传一定用户数后不再上传的问题，这次也优化了摄像头驱动
+****************************************
+提交日期：2010-04-06
+主要目的：解决生产问题
+版本号：Ver 6.4.1(build 43)
+
+备注：
+	1.3寸彩屏在登记用户成功后按ESC键弹出的 是否保存 对话框用左键操作失效
+	2.在菜单-系统设置-系统参数项修改设置后按OK先提示“您当前的操作已修改成功”后弹出“重启后生效”问题，原因：当参数~MulAlgVer为0时
+	  （都会存在此问题）控件句柄未被得到相应的初始化，利用句柄获得相应的值为-1.
+
+****************************************
+提交日期：2010-03-11
+主要目的：fix some bugs about x638 board use extend bell.
+版本号：Ver 6.4.1(build 41)
+
+备注：
+	1.change exfun.c
+
+****************************************
+提交日期：2010-03-1
+主要目的：增加面部识别仪FS1000的支持（iMagic）
+版本号：Ver 6.4.1(build 39)
+
+备注：
+    1、仅ZEM600支持面部识别仪FS1000。
+    2、需要打开宏定义FACE
+    
+    更新涉及的文件：
+    ./face/  
+    commu.c
+    commu.h
+    DelUserWindow.c
+    exfun.h
+    flashdb.c
+    gridview.c
+    langres.h
+    libcam.h
+    logoneuserquery.c
+    logquery.c
+    main.c
+    main.h
+    options.c
+    options.h
+    rs232comm.c
+    ssrauto.h
+    ssrdatadlg.h
+    ssrinfo.h
+    ssrmenu.c
+    ssrrestore.c
+    ssrstkey.c
+    ssrstkeymng.c
+    ssrsystem.h
+    ssrsystem3.h
+    ssruser.h
+    ssrvfwin.c
+    usermng.c
+    utils.c
+
+
+****************************************
+提交日期：2010-03-10
+主要目的：解决泰语bus error Bug
+
+备注：
+	1、解决泰语环境下3.5屏zem510平台，用户管理--门禁设置--开锁组合设置，按OK，在按OK退出时出现Bus error错误，原因：泰语情况下内存溢出
+****************************************
+提交日期：2010-03-03
+提交者：	刘振树
+主要目的：3寸屏机器，支持wifi功能，直连设置的时候设置错误，播放语音的时候，在zem510上面会中断的bug。
+版本号：Ver 6.4.1(build 38)
+svn 927
+
+备注：
+	主要解决以下问题:
+	1.在固件版本号为Ver 6.4.1(build 36)上	3寸屏机器，支持wifi功能，直连设置的时候设置错误
+	2. 播放语音的时候，在zem510上面会中断的bug
+	3. 解决蜂鸣器会发声的Bug，去除掉，启动是关闭蜂鸣器。
+		
+	更改涉及的文件:
+	ssrwifi.c
+	main.c
+	exfun.c
+	./zem510/zem510.c
+	./zem600/zem600.c
+	options.h
+	changelog.txt
+	
+
+****************************************
+提交日期：2010-02-25
+提交者：	刘振树
+主要目的：3寸屏机器，支持wifi功能，如果设置成共享模式，不加密的情况连接不通。
+版本号：Ver 6.4.1(build 36)
+svn 891
+
+备注：
+	主要解决以下问题:
+	1.在固件版本号为Ver 6.4.1(build 35)上，三寸彩屏系列的机器支持wifi的时候，设置成共享模式，不设置密码不通，
+	  经过在网上搜查资料和笔记本电脑的无线设置确认，主要是这个模式还是需要加密的，所以，现在更改成这种模式
+	  的情况下，默认需要加密，不能更改。
+	2.更改wifi搜查界面显示不正常的情况。
+	
+	更改涉及的文件:
+	ssrwifi.c
+	ssrwifiinfo.c
+	options.h
+	changelog.txt
+
+****************************************
+提交日期：2010-02-24
+提交者：	刘振树
+主要目的：解决3寸屏机器支持wifi的时候，结合测试部测试，进行更改
+
+svn 875
+
+备注：
+	主要解决以下问题:
+	1.在固件版本号为Ver 6.4.1(build 33)上，三寸彩屏系列的机器支持wifi的时候，界面上还存在一点问题，
+    还有就是左键无法进行设置密码操作.
+	2.关于支持土耳其语言的问题，关于特殊姓名以及考勤状态需要编码转换 
+	
+	更改涉及的文件:
+	ssrwifi.c
+	options.h
+	ssrwifipwd.c
+	tftlocale.c
+	
+****************************************
+提交日期：2010-02-22
+提交者：	刘振树
+主要目的：解决3寸屏机器支持MF卡的时候， 图像偏移问题
+
+svn 826
+
+备注：
+	主要解决以下问题:
+	1.在固件版本号为Ver 6.4.1(build 32)上，三寸彩屏系列的机器9.0+MF卡的主流固件存在
+在登记指纹卡的时候指纹和卡的图像有偏移的情况，
+	
+	更改涉及的文件:
+	MFCardwin.c
+	options.h
+	ssrcard.c
+	ssrvfwin.c
+		
+****************************************
+提交日期：2010-02-11
+提交者：	刘振树
+主要目的：解决wifi不通的问题，系设置出错导致的。
+
+svn 785
+
+备注：
+	主要解决以下问题:
+	1.解决wifi不通的问题，系设置出错导致的,主要是设置的时候参数出错的原因。
+	
+	更改涉及的文件:
+		ssrwifi.c
+
+
+****************************************
+提交日期：2010-02-08
+提交者：	饶家志
+主要目的：解决GPRS测试发现问题
+
+备注：
+	主要解决以下问题:
+	1.支持用于测试脱机SDK上传的数据，自动上传到ADMS服务器
+	2.去掉后台验证与GPRS有关的代码
+	3.解决GPRS状态显示与短信重叠问题
+	4.解决PUSH_SDK接收部分数据不能处理问题
+
+	更改涉及的文件:
+		flashdb.c	commu.c
+		ssrrestore.c	options.c	options.h	
+		main.c
+		iclock/httpc.c
+
+****************************************
+提交日期：2010-02-03
+提交者：	饶家志
+主要目的：解决GPRS测试发现问题
+
+备注：
+	主要解决下列问题：
+	1.PUSH_SDK在线升级固件功能的临时文件存放位置更改为:/mnt/ramdisk
+	2.解决修改用户密码后，PUSH_SDK不上传问题
+	3.ZEM600平台播放声音死机问题
+	更改涉及的文件如下:
+		iclock/httpc.c,usermng.c和exfun.c
+
+****************************************
+提交日期： 2010-01-28
+提交者：	刘振树
+主要目的： 解决客户反馈的bug
+
+备注：
+
+	主要解决的问题如下：
+	1.解决备份登记指纹的时候，如果不保存指纹，这个时候，固件会清空以前原有的指纹（10.0），
+		对9.0来说，根本不需要处理，但是也进行了处理，导致以前的指纹无法使用。
+	主要更改的文件为：
+	1. usermng.c， ssrduressFp.c Fpwindow.c
+	更改函数 int DelFingerFromCache(U16 pin) 为函数：int DelFingerFromCache(HANDLE Handle)；
+	具体涉及到调用这个函数的地方都需要更改。
+
+****************************************
+提交日期： 2010-01-25
+提交者：	刘振树
+主要目的： fix a bug fllow this:
+
+备注：
+
+	主要解决的问题如下：
+	1. change "#define maxuser 45+50" to "#define maxuser (45+50)", like
+	this , so change all file include this define. --zsliu
+
+****************************************
+提交日期： 2010-01-22
+提交者：	刘振树
+主要目的： 解决生产上的bug,具体如下：
+
+备注：
+	固件版本号为：Ver 6.4.1(build 31)
+	
+主要解决的问题如下：
+	1. 内存溢出，机器反应越来越慢
+****************************************
+提交日期： 2010-01-20
+提交者：	刘振树
+主要目的： 解决生产上的bug,具体如下：
+
+备注：
+	固件版本号为：Ver 6.4.1(build 30)
+	
+主要解决的问题如下：
+	1. 解决带TTS功能，启动时有杂音问题
+****************************************
+提交日期： 2010-01-19
+提交者：	刘振树
+主要目的： 解决生产上的bug,具体如下：
+
+备注：
+	固件版本号为：Ver 6.4.1(build 29)
+	
+主要解决的问题如下：
+	1. 解决带ADMS功能同时加TTS功能，在设置WEBSERVER的IP地址后返回主界面，当按menu键进入界面后死机问题
+****************************************
+提交日期： 2010-01-14
+提交者：	刘振树
+主要目的： 解决生产上的bug,具体如下：
+
+备注：
+	固件版本号为：Ver 6.4.1(build 28)
+	
+主要解决的问题如下：
+	1. B3机器按power键关机后，在按power键不能开机
+	2. 定时响铃功能改变音量后不起作用Bug
+****************************************
+提交日期： 2010-01-13
+提交者：   刘振树
+主要目的： 解决生产上的bug,具体如下：
+
+备注：
+	固件版本号为：Ver 6.4.1(build 27)
+	
+主要解决的问题如下：
+	1. 解决sensor有黑边的问题增加参数 sensorOffsetY，默认为10
+	2. ADMS 上传用户指纹bug， 删除全部数据 bug
+	3. 修改 10.0指纹 bug
+	4. 修改 射频卡机器 可能出现的 bug
+	5. 修改写指纹卡速度慢的问题
+	6. 解决了些Wiegand out 的问题
+	7. 主要做了键盘映射功能，可以通过固件支持不同的键盘类型，目前支持特殊 键盘如B3机型，ICS01键盘。msg.c msg.h
+	8. 解决zem600核心板下，声音调节的问题，同时解决声音设置无效的问题，声音小的bug
+	9. 更改界面显示部分，主要针对胁迫指纹界面，上传宣传图片界面
+	10.外接响铃（继电器响铃）功能。
+	11.3寸屏机器，恢复键盘设置的时候，如果打开workcode按键，会恢复，现在更改3寸屏恢复的时候，不处理这些快捷键，
+	12.u盘升级linuxlogo的问题，目前在510和600平台都做了处理，可以实现，zem510平台的大小为64KB， zem600大小为256KB
+
+
+****************************************
+提交日期： 2009-12-21
+提交者：   刘振树
+主要目的： 主流已经移交生产，可以在此基础上做定制固件(生产上目前的固件是 Ver 6.4.1(build 22)
+
+备注：
+	固件版本号为：Ver 6.4.1(build 23)
+	新增版本Ver 6.4.1(build 23)主要解决的问题就是解决后台验证的时候，连续按下指纹，会中断的情况，这个问题已经解决，仅仅更改msg.c中一个地方，如下：
+           原始的：if(gEthOpened && ((menuflag==0) || (FPEnrollMode == ENROLLMODE_ONLINE)))
+           更改后的：if(gEthOpened && ((menuflag1==0) || (FPEnrollMode == ENROLLMODE_ONLINE)))
+
+这个固件不支持的：
+	1. GPRS功能。
+	2. MF卡作为指纹卡使用。
+
+这次主要支持功能如下：
+主要需要实现的功能：
+?	本固件源码包括zem510和zem600核心板的内容，通过编译开关进行控制。
+?	同时支持10.0算法和9.0指纹算法固件，两个算法可以自动进行切换。
+?	独立9.0指纹算法固件，界面的自动切换，功能的自动控制。
+?	ADMS功能支持10.0指纹算法的指纹传输。
+?	门禁中的胁迫指纹的处理。
+?	脱机SDK的联机登记功能，同时支持9.0和10.0指纹算法。
+?	多国语言部分，做到10国语言，扩充到17国语言。（具体需要核实列出来）
+?	Webserver同时支持10.0和9.0指纹算法。
+?	RIS后台验证同时支持10.0和9.0指纹算法。
+?	I2C Keyboard 触摸按键的自动识别。
+
+	参数说明：
+	lDetectFpAlg			//主要是针对无膜指纹头的探测算法，机器默认为1，用户可以自行设置，恢复出厂设置的时候，不可恢复。
+  lZKFPVersion			//算法版本号，默认为9.0, 用户可以自行设置，恢复出厂设置的时候，不可恢复。
+  lFingerSensitivity		//指纹灵敏度0低、1中、2高，目前仅对无膜有效,默认为1，用户可以自行设置，恢复出厂设置的时候，不可恢复。
+  l~LCDType			//支持屏幕类型，默认为0，用户可以自行设置，恢复出厂设置的时候，不可恢复，参数具体含义
+l~LCDType = 0  		//支持3寸彩屏固件
+l~LCDType = 1  		//支持3.5寸彩屏固件
+l~LCDType = 2  		//等方便扩展处理.也可以等于很多种。
+  l~MulAlgVer			//是否支持多种算法，默认为0. 不支持多种算法，用户可以自行设置，恢复出厂设置的时候，不进行处理。
+参数具体含义如下所示：
+l～MulAlgVer=0		//仅支持单一指纹算法
+l～MulAlgVer=1		//支持多种指纹算法，目前支持9.0和10.0算法自由切换
+l如果仅仅需要支持9.0的固件，配置如下：ZKFPVersion=9，并且～MulAlgVer=0
+l如果仅仅需要支持10.0的固件，配置如下：ZKFPVersion=10，并且～MulAlgVer=0
+l如果需要支持10.0/9.0之间可以切换的固件，则配置如下：～MulAlgVer=1
+  lkeyboardStyle		//键盘类型，默认为0， 支持普通按键(机械键盘)处理，用户可以自行设置，恢复出厂设置的时候，不可恢复，具体参数含义如下：
+lkeyboardStyle = 0	       //支持普通按键的键盘类型。
+lkeyboardStyle = 1	       //支持触摸按键的键盘类型，如果是触摸按键，请将此参数设置为1，将来单片机更改成自动识别，兼容这种设置参数的方式。
+  lIclockSvrFun		//是否支持ADMS功能，默认是0，不支持ADMS功能，如果需要支持此功能，只需要打开此参数即可，不需要重新编译固件。
+  lWriteLCDDelay		//写屏之后的delay时长设置，也就是说，一旦通过SDK写屏之后，会在界面上停留显示的时间。默认为30秒，用户可以自行设置，
+					恢复出厂设置的时候，不可恢复。
+
+具体更改参考代码
+
+
+****************************************
+提交日期： 2009-12-11
+提交者：   刘振树
+主要目的： 解决测试部正在测试的bug
+备注：
+	测试部提出主流固件修改：
+	
+	固件版本号为：Ver 6.4.1(build 16)
+
+	这次主要解决的问题有：
+
+	1. 在wifi信号界面，按键偶尔有死机的错误，提示信息如下：
+	   *** glibc detected *** ./main: double free or corruption (!prev): 0x00387000 ***
+	   Aborted
+	  这个问题目前已经搞定
+
+	2. 带摄像头机器，用户考勤，保存照片的时候，出现内存泄漏的问题，造成机器死机。
+	   原因分析：是系统索引表不断增大的原因，造成cache不停增加，考勤100次，大约可以增加700KB，非常夸张。
+	   解决方案：固件做了一个计数器，只要保存照片次数超过100次，机器会自动清空系统cache，释放内存，
+			这样可以避免死机的出现，缺点是在保存照片次数不超过100次的时候，会占用一定的内存空间。
+	   使用系统命令： system("/bin/echo 2 >>/proc/sys/vm/drop_caches");
+
+
+	3. 浏览考勤图片重叠的问题，已经解决。
+
+	4. 键盘自定义的地方，可以定义24个字符，
+	   界面显示部分：目前显示截取成为20个字符，因为24个字符已经超过了界限，不是很美观，所以做了处理。
+	   查询考勤记录界面：查询详细考勤记录，这里对自定义的考勤状态也做了显示处理。
+
+	5. 高速上传用户混乱的问题，这个问题得到解决。
+
+具体更改参考代码
+
+****************************************
+提交日期：               2009-07-27
+提交者：                    张振国
+主要目的：               when enrolling user, user's photo over the last line lcd 
+备注：
+	生产提出主流固件修改：
+	1、iclock600在登记用户和用户管理中，当拍照后，连续拍照时，第一次拍的照片会和后面的所拍的照片有重叠；
+	2、在拍照界面中，旋转90选项选择后无用，生产建议只在视频设置中出现是否选择90度旋转。
+	svn 版本290
+
+具体更改部分：
+1. 在ssrvideoadjust.c文件中，消息处理函数如下处修改
+	case MSG_COMMAND:
+	... ...
+	将原来ShowCapturePic(HDC_SCREEN, 75, 30, 240, 180);
+	修改为ShowCapturePic(HDC_SCREEN, 75, 30, 240, 155);  
+	具体更改参考代码
+	
+****************************************
+		
+提交日期：               2009-07-22
+提交者：                    刘振树
+主要目的：               切换0303指纹头，并且移交测试部完善测试功能，解决常见Bug.
+备注：
+	更新主流固件支持新的算法库（libzkfp.so.3.5.1.gc0303），更换指纹头 0303， 并且兼容以前的。
+	版本号暂时定为： Ver 4.6.0(build 265)
+	svn 版本288
+
+具体更改部分：
+1. 测试发现彩屏固件没有对RTC进行同步操作, 应该每小时同步一次RTC.
+	-- 增加每小时同步时间功能
+2. 实际的用户数比预置的用户数多了一个。比如：上传3115个用户，上传用户成功后，读出的设备用户数为3001，比预定用户数3000多，
+	查看设备中的用户个数也是3001。
+	-- 这个已经解决，主要是代码中出错导致的。
+3. 删除记录的问题，机器删除记录总是会多删除几百条。
+	-- 经过确认，彩屏没有采用以前陈经理更改过的代码，还是有问题的比较旧的代码，现在已经解决。
+4. 关于彩屏固件在通过SDK函数在线登记指纹成功后，不能正常返回到主界面BUG修复
+	-- 已经解决
+5. 用户设置->新增用户->验证方式：打开用户号码，卡登记，多种验证方式等功能时验证方式的提示标签被“OK（M/<-）”所遮盖。
+	用户设置->管理用户->编辑用户->验证方式：验证方式的提示标签被“OK（M/<-）”所遮盖。
+	注：在不打开用户门禁的情况下。
+	-- 已经解决。
+6. 通讯设置->Web Connect:标签Web Connect没有改成Web Setup 
+	-- 这个重新更改，已经更改并且解决。
+7. 系统设置—数据管理—清除宣传图片—图片遮盖部分字符。
+	-- 这个已经解决
+8. 通讯设置--韦根设置--输出设置—格式—内容有遮盖。
+	-- 这个问题已经解决。
+9. 通讯设置--无线设置-设置密码--密码类型内容有部分遮盖。
+	-- 这个暂时不处理，因为屏幕宽度限制，无法进行处理。
+10.每个列表框中标题最右边的字母名称显示不是很完整，而且与标题栏间隔线的距离太近，造成最右边的字母看不清；
+	-- 这个暂时不做修改
+11.通讯设置中Web Connect标题中字母ct看不到。
+	-- 这个已经更改，但是更改成为： Web Setup
+12.键盘定义，进入编辑后，不做任何修改，按退出键退出，会弹出对话框提示是否保存。
+	-- 这个问题已经解决，是字体转换的问题。
+13.新增用户功能中“验证方式”项看不到其提示标签；打开门禁设置后，进入组编辑功能，“验证方式”项同样看不到其提示标签。
+	在用户登记中打开ID卡登记等多个功能时，验证方式的提示标签正好被“完成”按钮覆盖。
+	-- 在用户设置-》用户门禁-》验证方式-》这个选项，是可以看到的，请确认。
+	-- 打开门禁设置后，进入组编辑功能，“验证方式”项看不到其提示标签， 这个已经更改了。
+14.U盘管理及固件升级功能中，“检测不到U盘”等对话框的后面有方框存在。
+	-- 这个不需要更改，是因为机器反应速度的原因形成阴影。
+15.解决阿拉伯语显示的问题，位置错误, 图像有重叠的现象， MFCard界面。
+	-- 已经解决此问题
+16. 解决短消息显示乱码的问题。
+	-- 已经解决
+17. 解决清空MFCard的时候，总是提示清空失败的bug, 现在已经更改。
+	-- 已经解决
+****************************************
+
+****************************************
+提交日期：               2011-07-16
+提交者：                    李华明
+主要目的：               增加U盘检测功能 
+备注：
+	主流固件修改：
+	1、当插入U盘时，桌面显示一个小图标
+
+具体更改部分：
+1. 在option中增加三个参数
+		USBCheckTime 几秒进行一次U盘检测
+		USBFileCount 针对ZEM510、ZEM560的 /proc/bus/usb/001 目录在没有插U盘时有几个文件
+		USBCheckOn   U盘检测功能开关
+2.在main.c中增加ShowUsbState函数以判断是否有U盘插入
+3.修改CheckProcBusUsb检测函数，检测目录/proc/scsi/usb-storage是否存在时，改用了stat
+	同时增加USBFileCount控制/proc/bus/usb/001存在的文件数
+4.增加了一个新的小图标usbcheck.gif
+
+	
+****************************************

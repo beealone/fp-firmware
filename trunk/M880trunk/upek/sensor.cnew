@@ -1,0 +1,448 @@
+/*************************************************
+                                           
+ ZEM 200                                          
+                                                    
+ sensor.c
+                                                      
+ Copyright (C) 2003-2006, ZKSoftware Inc.      		
+                                                      
+*************************************************/
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <sys/mman.h>
+#include <signal.h>
+#include <string.h>
+#include <sys/time.h>
+#include <sys/stat.h>
+#include "arca.h"
+#include "options.h"
+#include "sensor.h"
+#include "zkfp.h"
+#include "lcm.h"
+#include "exfun.h"
+#include "usbdpfp.h"
+#include "utils.h"
+#include "main.h"
+
+#include "upek.h"
+#include "gpio.h"
+static int fd_Sensor = -1; /* device file handler */
+//static int fd_Sensor_1 = -1; /* device file handler */
+//static BOOL IsURU4000BDrive=FALSE;
+//static unsigned char *FingerBuf = NULL;
+//static struct ft_device_info dev_info;
+
+static int sensor_normal = 0;
+int ShowVar=1;
+int LastIndex=0;
+int LastUserID=0;
+
+int ImageWidth=CMOS_WIDTH; 	//茂驴陆茂驴陆脟掳茂驴陆脡录茂驴陆茂驴陆茂驴陆茂驴陆茂驴陆脛驴茂驴陆茂驴陆
+int ImageHeight=CMOS_HEIGHT; 	//茂驴陆茂驴陆脟掳茂驴陆脡录茂驴陆茂驴陆茂驴陆茂驴陆茂驴陆脛赂脽露茂驴
+
+#define D_WIDTH		128
+#define D_HEIGHT	64
+int LeaveFinger = TRUE;
+BYTE prev_fp[D_WIDTH*D_HEIGHT]={255};
+BYTE diff_fp[D_WIDTH*D_HEIGHT]={0};
+BYTE cur_fp[D_WIDTH*D_HEIGHT]={0};
+
+void InitSensor1(int LeftLine, int TopLine, int Width, int Height, int FPReaderOpt)
+{     
+	sint32 VendorCode;
+	sint32 ret;
+	int fd;
+  	SENSOR_DATA sensor_data;
+	char buf[80];
+
+       	fd=open(GetEnvFilePath("USERDATAPATH", "nvm", buf), O_RDWR, S_IRWXU|S_IRWXG|S_IRWXO);
+	if(fd<0)
+	{
+		DBPRINTF("start calibrating\n");
+		ret = calibrate();
+	        if(ret==0)
+		{
+			DBPRINTF("UPEK calibrate success!\n");	
+			ExBeep(1);
+			DelayMS(2000);
+		}
+		else
+		{
+			char buf[32];
+			DBPRINTF("UPEK calibate failed,ret=%d!\n",ret);
+			ExBeep(2);
+			DelayMS(2000);
+		}
+	}else
+		close(fd);
+	ret = STInitialize (&sensor_data);
+  	printf("STInitialize ret:%ld,SensorVersion=%d,W=%d,H=%d\n", ret,
+			  sensor_data.SensorVersion, sensor_data.ArrayWidth,
+				  sensor_data.ArrayHeight);
+  	ret = STAuthentify (&VendorCode);
+  	printf ("Authentify ret:%ld,vendorcode=%lx\n", ret, VendorCode);  
+
+	if ((ret = STQueryDevice ()) == 0)
+      	{
+		sensor_normal=TRUE;
+		memset(prev_fp,255,D_WIDTH*D_HEIGHT);
+          	printf ("STQueryDevice ok\n");
+    	}
+  	else
+	{
+		sensor_normal=FALSE;
+		printf ("ret:%ld STQueryDevice error\n", ret);
+	}
+
+	ImageWidth=sensor_data.ArrayWidth;
+	ImageHeight=sensor_data.ArrayHeight;
+	gOptions.OImageWidth=sensor_data.ArrayWidth;
+	gOptions.OImageHeight=sensor_data.ArrayHeight;
+	gOptions.ZF_WIDTH = sensor_data.ArrayWidth;
+	gOptions.ZF_HEIGHT = sensor_data.ArrayHeight;
+	gOptions.CPY[0]=0;
+	gOptions.CPX[2]=0;
+}
+
+void get_sensor_info(int fd)
+{
+	//nothing to do
+}
+
+void FreeSensor(void)
+{    
+}
+
+void FlushSensorBuffer(void)
+{
+	//nothing to do
+}
+
+void RotationImageVetical(char *buffer, int width, int height)
+{
+	int i;
+	char *tmp;
+	
+	tmp=malloc(width);
+	for(i=0;i<height/2;i++)
+	{
+		memcpy(tmp, buffer+i*width, width);
+		memcpy(buffer+i*width, buffer+(height-i-1)*width, width);
+		memcpy(buffer+(height-i-1)*width, tmp, width);
+	}
+	free(tmp);
+}
+
+void reset_upek(void)
+{
+	InitSensor1(gOptions.OLeftLine,gOptions.OTopLine,gOptions.OImageWidth,gOptions.OImageHeight,gOptions.NewFPReader);
+}
+
+int RegionDivideAdaptive(char* lpDIBBits, int lmageWidth, int lmageHeight)
+{
+	int i;  //循环变量
+	int j;	//循环变量
+	// 指向源图像的指针
+	unsigned char*	lpSrc;	
+	//像素值
+	unsigned char pixeltemp;	
+	// 子图像灰度的平均值
+	int nAvg ;
+	nAvg = 0 ; //初始化为0
+	// 对左下图像逐点扫描：
+	for(j = 0; j <lmageHeight; j++)
+	{
+		for(i = 0;i <lmageWidth; i++)
+		{
+			// 指向源图像倒数第j行，第i个象素的指针			
+			lpSrc = (unsigned char *)lpDIBBits + lmageWidth * j + i;
+			//取得当前指针处的像素值
+			pixeltemp = (unsigned char)*lpSrc;
+			//灰度的累计
+			nAvg = (int)pixeltemp+nAvg;
+		}
+	}
+	// 计算均值
+	// -8 is best for blank image,because the diff is very small on blank image,it can filter many invalid data.
+	nAvg = nAvg /((lmageHeight) * (lmageWidth))-8 ; 
+	// 对左下图像逐点扫描：
+	for(j = 0; j <lmageHeight; j++)
+	{
+		for(i = 0;i <lmageWidth; i++)
+		{
+			// 指向源图像倒数第j行，第i个象素的指针			
+			lpSrc = (unsigned char *)lpDIBBits + lmageWidth * j + i;
+			//取得当前指针处的像素值
+			pixeltemp = (unsigned char)*lpSrc;
+			//目标图像中灰度值小于门限则设置为黑点
+			if(pixeltemp <= nAvg)
+			{
+				*lpSrc=(unsigned char)0;
+			}
+			else	//否则设置为白点
+			{
+				*lpSrc=(unsigned char)255;
+			}		
+		}
+	}
+}
+
+int detect_fp(int HasFingerThreshold,int NoFingerThreshold)
+{
+	int ret,v,avg_cur,avg_diff,m1,m2,size,pixel_diff;
+	BYTE *finger;
+	char buf[32];
+	static int failed_count=0,init_pre_fp=0;
+	static int waitCapture=8; 
+	//decrese capture times,decrease power consumption,and chip will not hot.
+	//a circle(big loop) take about 20ms,it wait 20ms*8=160ms
+	if(waitCapture)
+		waitCapture--;
+	else
+		waitCapture=8;
+	if(LeaveFinger && waitCapture)
+		return FALSE;
+	ret = STGrab(cur_fp,D_HEIGHT, 64, 1,D_WIDTH, 32,1);
+	if(ret!=0)
+	{
+		if(failed_count++>3)
+		{
+			DBPRINTF("upek have exception,now reset\n");
+//			LCDWriteStr(0,0,"FP Reader Error",1);
+			DelayMS(1000);
+			reset_upek();
+		}
+//		LCDWriteStr(0,0,"FP Reader Error",1);
+		return FALSE;
+	}
+	RegionDivideAdaptive(cur_fp,D_WIDTH,D_HEIGHT);
+	size = D_WIDTH*D_HEIGHT;
+	for(v=0;v<size;v++)
+	{
+		if(cur_fp[v]==prev_fp[v])
+			pixel_diff=255;
+		else
+			pixel_diff=0;
+		diff_fp[v]=(BYTE)pixel_diff;
+	}
+	CalcVar(cur_fp,D_WIDTH,D_HEIGHT,&avg_cur,&m1,0);
+	CalcVar(diff_fp,D_WIDTH, D_HEIGHT,&avg_diff,&m2,0);
+	if(gOptions.SaveBitmap)
+	{
+		write_bitmap("/mnt/mtdblock/cur.bmp", cur_fp, D_WIDTH, D_HEIGHT);
+		write_bitmap("/mnt/mtdblock/prev.bmp", prev_fp, D_WIDTH, D_HEIGHT);
+		write_bitmap("/mnt/mtdblock/diff.bmp", diff_fp,D_WIDTH, D_HEIGHT);
+		DBPRINTF("Save cur.bmp ok\n");
+	}
+	if(!LeaveFinger && (avg_cur<NoFingerThreshold || avg_diff>NoFingerThreshold))
+	{
+		LeaveFinger=TRUE;
+		memcpy(prev_fp,cur_fp,D_WIDTH*D_HEIGHT);
+		/*DBPRINTF("- avg_cur=%d,avg_diff=%d,LeaveFinger=%d\n",avg_cur,avg_diff,LeaveFinger);
+		sprintf(buf,"-%d-%d     ",avg_cur,avg_diff);
+		LCDWriteStr(0,0,buf,1);*/
+		return FALSE;
+	}else if(LeaveFinger && avg_cur>HasFingerThreshold && (avg_diff>NoFingerThreshold) )
+	{
+		LeaveFinger=FALSE;
+		//write_bitmap("/mnt/mtdblock/cur_fp.bmp", cur_fp, D_WIDTH, D_HEIGHT);
+		memcpy(prev_fp,cur_fp,D_WIDTH*D_HEIGHT);
+		/*DBPRINTF("+ avg_cur=%d,avg_diff=%d,LeaveFinger=%d\n",avg_cur,avg_diff,LeaveFinger);
+		sprintf(buf,"+%d-%d     ",avg_cur,avg_diff);
+		LCDWriteStr(0,0,buf,1);*/
+		return TRUE;
+	}else
+	{
+		if(!init_pre_fp && (avg_cur<gOptions.HasFPThreshold-NoFingerThreshold) && avg_diff<30)
+		{
+			DBPRINTF("=============init pre_fp\n");
+			memcpy(prev_fp, cur_fp, D_WIDTH*D_HEIGHT);
+			init_pre_fp = TRUE;
+		}
+/*
+		if(gOptions.ShowScore)
+		{
+			if(LeaveFinger)
+				sprintf(buf,"-%d-%d     ",avg_cur,avg_diff);
+			else
+				sprintf(buf,"+%d-%d     ",avg_cur,avg_diff);
+	
+			LCDWriteStr(0,0,buf,1);
+		} */
+	}
+	return FALSE;
+
+}
+int CaptureSensor(char *Buffer, BOOL Sign, PSensorBufInfo SensorBufInfo)
+{
+
+	//U32 framesize=ImageWidth*ImageHeight;
+	U32 len=gOptions.OImageWidth *gOptions.OImageHeight;
+	//char curtime[20];
+	sint32 ret;
+	if(!sensor_normal)	//if sensor bad,don't capture finger
+		return FALSE;
+	//struct timeval tv;
+	//struct timeval tv1;
+	//gettimeofday(&tv,NULL);
+	if(Sign!=ONLY_CAPTURE)
+	{
+		/*static int temp=0;
+		DBPRINTF("detect start :%d",GetUS()-temp);
+		temp=GetUS();*/
+		if(!detect_fp(gOptions.HasFPThreshold*36,gOptions.NoFPThreshold*36))
+		{
+			//DBPRINTF("Detect fp,take time:%d\n",GetUS()-temp);
+			return FALSE;
+		}
+	}
+	ret = STGrab (Buffer, gOptions.OImageHeight, 0, 1, gOptions.OImageWidth, 0, 1);
+	//gettimeofday(&tv1,NULL);
+	//sprintf(curtime,"take time:%d\n",(tv1.tv_sec-tv.tv_sec)*1000+(tv1.tv_usec-tv.tv_usec)/1000);
+	//DBPRINTF("STGrab success at %s\n",curtime);
+	if(ret==0)
+	{
+		if(SensorBufInfo)
+		{
+			//image buffer info
+			SensorBufInfo->SensorNo=255;
+			SensorBufInfo->RawImgLen=len;
+			SensorBufInfo->RawImgPtr=Buffer;
+			SensorBufInfo->DewarpedImgLen=len;
+			SensorBufInfo->DewarpedImgPtr=Buffer;
+		}
+		return TRUE;
+	}
+	else
+		return FALSE;
+}
+
+int CalcThreshold(int NewT)
+{
+	if(NewT<10) return NewT<0?0:NewT*3;
+	else return NewT>50? 70: NewT+20;
+}
+
+int CalcNewThreshold(int Thr)
+{
+	if(Thr<30) return Thr<0?0:Thr/3;
+	else return Thr>70? 50: Thr-20;
+}
+
+
+
+#define BSIZE 16
+int CalcVar(BYTE *img, int width, int height, int *var, int *mean, int FrameWidth)
+{
+	int msum, vsum, i, j, bc, sum, m, n, v,t, bsize;
+	BYTE *p;
+	bsize=BSIZE*BSIZE;
+	msum=0;bc=0;vsum=0;
+	width-=FrameWidth*2;
+	height-=FrameWidth*2;
+	for(i=0;i<height/BSIZE;i++)
+	for(j=0;j<width/BSIZE;j++)
+	{
+		sum=0;
+		for(m=i*BSIZE;m<i*BSIZE+BSIZE;m++)
+		{
+			p=img+FrameWidth+(m+FrameWidth)*(width+FrameWidth*2)+j*BSIZE;//locate the position that calculate begin
+			for(n=0;n<BSIZE;n++)
+				sum+=(int)*p++;
+		}
+		sum=(sum+bsize)/bsize;	//why?
+		msum+=sum;
+		v=0;
+		for(m=i*BSIZE;m<i*BSIZE+BSIZE;m++)
+		{
+			p=img+FrameWidth+(m+FrameWidth)*(width+FrameWidth*2)+j*BSIZE;
+			for(n=0;n<BSIZE;n++)
+			{
+				t=(int)*p++-sum;
+				t=t*t;
+				v+=t;
+			}
+		}
+		v=(v+bsize)/bsize;
+		vsum+=v;
+		bc++;
+	}
+	*var=(vsum+bc/2)/bc;
+	
+	return 1;
+}
+
+U32 FPTest(char *ImgBuf)
+{
+	//detect_fp() function instead of the function.	
+	return TRUE;
+}
+
+
+
+#define P_O_WIDTH(s) s[0]
+#define P_O_HEIGHT(s) s[1]
+#define P_CP0_X(s) ((s[2]))
+#define P_CP0_Y(s) ((s[3]))
+#define P_CP1_X(s) ((s[4]))
+#define P_CP1_Y(s) ((s[5]))
+#define P_CP2_X(s) ((s[6]))
+#define P_CP2_Y(s) ((s[7]))
+#define P_CP3_X(s) ((s[8]))
+#define P_CP3_Y(s) ((s[9]))
+#define P_TP0_X(s) s[10]
+#define P_TP0_Y(s) s[11]
+#define P_TP1_X(s) s[12]
+#define P_TP1_Y(s) s[13]
+#define P_TP2_X(s) s[14]
+#define P_TP2_Y(s) s[15]
+#define P_TP3_X(s) s[16]
+#define P_TP3_Y(s) s[17]
+#define P_TP4_X(s) s[18]
+#define P_TP4_Y(s) s[19]
+#define FP_WIDTH(s) s[20]
+#define FP_HEIGHT(s) s[21]
+
+int FPBaseInit(char *FingerCacheBuf)
+{
+	short sizes[22];
+	BYTE params[8];
+	
+	P_O_WIDTH(sizes)=gOptions.OImageWidth;
+	P_O_HEIGHT(sizes)=gOptions.OImageHeight;
+	FP_WIDTH(sizes)=gOptions.ZF_WIDTH;
+	FP_HEIGHT(sizes)=gOptions.ZF_HEIGHT;
+	P_CP2_X(sizes)=(short)gOptions.CPX[0];
+	P_CP0_Y(sizes)=(short)gOptions.CPY[0];
+	P_CP3_X(sizes)=(short)gOptions.CPX[1];
+	P_CP1_Y(sizes)=(short)gOptions.CPY[1];
+	P_CP0_X(sizes)=(short)gOptions.CPX[2];
+	P_CP2_Y(sizes)=(short)gOptions.CPY[2];
+	P_CP1_X(sizes)=(short)gOptions.CPX[3];
+	P_CP3_Y(sizes)=(short)gOptions.CPY[3];
+	params[0]=1;
+	params[1]=50;
+	params[2]=65;
+	params[3]=110;
+	params[4]=0;
+	params[5]=255;
+#ifdef TESTIMAGE
+	P_TP0_X(sizes)=8;
+	P_TP0_Y(sizes)=8;
+#else
+	P_TP0_X(sizes)=180;
+	P_TP0_Y(sizes)=138;
+#endif	
+	if((FingerCacheBuf==NULL) && fhdl) 
+		FingerCacheBuf=(char*)fhdl; 
+	else if(FingerCacheBuf==NULL) 
+		FingerCacheBuf=(char*)malloc(1024*1024*2);
+	fhdl=BIOKEY_INIT(fd_Sensor, (WORD*)sizes, params, (BYTE*)FingerCacheBuf, 0x80);	
+	BIOKEY_MATCHINGPARAM(fhdl, IDENTIFYSPEED, gOptions.MThreshold);
+	BIOKEY_SETNOISETHRESHOLD(fhdl, gOptions.MaxNoiseThr, gOptions.MinMinutiae, gOptions.MaxTempLen, 500);	
+	return (int)fhdl;
+}
+

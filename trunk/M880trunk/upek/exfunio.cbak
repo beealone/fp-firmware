@@ -1,0 +1,839 @@
+//#define _DEBUG_ME_
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
+#include "exfun.h"
+#include "serial.h"
+//#include "minilzo.h"
+#include "options.h"
+#include "lcm.h"
+#include "lcdmenu.h"
+#include "exfunio.h"
+
+static int MCUVersion=0;
+static char WavFilePath[80]="NONE";
+BYTE VoiceSection[10*2]={  //StartPos/125ms, length/20ms
+	0,43,5,45,13,45,20,60,30,60,40,60,49,45,56,68,66,47,74,78};
+int gLCDData=0;
+
+int ExAlarmOffByMCU(void);
+
+int FlashInputs(void)
+{
+	int ch;
+	//�Ž�ϵͳ!!!!
+	if(bt232.poll()) ch=bt232.read();
+	return 1;
+}
+
+#define MCUBUFFERCNT	8
+static char MCUCMDBuffer[MCUBUFFERCNT][8];
+static int OutCmdBuf=0;
+static int InCmdBuf=0;
+
+int _BT232Check_(char *buffer)
+{
+	int i,cc;
+	U32 cmd=0, ch,sum;
+	if(bt232.poll()==0) return MCU_CMD_NONE;
+	i=0;sum=0;
+	while(1)
+	{
+		cc=0;
+		while(bt232.poll()==0)
+		{
+			DelayUS(50);
+			cc+=1;
+			if(cc>=2000) 
+			{
+				DBPRINTF("_BT23Check_ read time out\n");
+				return MCU_CMD_ERROR;
+			}
+		}
+		ch=bt232.read();
+		switch(i){
+		case 0:
+			if(ch==0xA5) return MCU_CMD_REPONSE;
+			//DBPRINTF("i=0,ch=%d",ch);
+		case 1:
+			if(ch==0x53) i++; else i=0;
+			//DBPRINTF("i=%d,ch=%d\n",i,ch);
+			break;
+		case 2:
+			cmd=ch;
+			i++;
+			break;
+		case 3:
+			if(ch+cmd==0xFF)
+				i++;
+			else
+				i=0;
+			//DBPRINTF("ch+cmd%d=0xff,i=%d\n",cmd,i);
+			break;
+		case 11:
+		case 12:
+			if((cmd!=216 && cmd!=215) || i==12)
+			{
+				if((sum & 0xFF)==ch)
+				{
+					if(cmd==20)
+						MCUVersion=buffer[0];
+					return cmd;
+				}
+				else
+					i=0;
+				//DBPRINTF("sum%d&0xff==ch%d,i=%d\n",sum,ch,i);
+				break;
+			}
+		default:
+			buffer[i-4]=ch;
+			sum+=ch;
+			i++;
+		}
+		if(i==0) break;
+	}
+//	while(bt232.poll()) ch=bt232.read();
+	//DBPRINTF("return MCU_CMD_ERROR,i=%d,ch=%d,buf:%d,%d,%d,%d\n",i,ch,buffer[0],buffer[1],buffer[2],buffer[3]);
+	return MCU_CMD_ERROR;
+}
+
+int CheckBT232(void)
+{
+	int i,ret=_BT232Check_(MCUCMDBuffer[InCmdBuf]);
+	if(ret==MCU_CMD_NONE) return ret;
+	if(ret==MCU_CMD_REPONSE) return ret;
+	if(ret==MCU_CMD_ERROR) return ret;
+	MCUCMDBuffer[InCmdBuf][7]=ret;
+	i=InCmdBuf+1;
+	if(i>=MCUBUFFERCNT) i=0;
+	if(i!=OutCmdBuf)
+		InCmdBuf=i;
+	return ret;
+}
+
+int BT232Check(char *buffer)
+{
+	int i;
+	if(OutCmdBuf!=InCmdBuf)
+	{
+		memcpy(buffer, MCUCMDBuffer[OutCmdBuf], 8);
+		i=OutCmdBuf;
+		OutCmdBuf++;
+		if(OutCmdBuf>=MCUBUFFERCNT) OutCmdBuf=0;
+		//DBPRINTF("return MCUCMDBuffer:%d\n",(U8)MCUCMDBuffer[i][7]);
+		return (U8)MCUCMDBuffer[i][7];
+	}
+	else
+		return _BT232Check_(buffer);
+}
+
+int BT232Wait(int CmdType, int TimeOut, char *Buffer)
+{
+	int c;
+	U32 startTime;
+	startTime=GetUS();
+	while(1)
+	{
+		c=BT232Check(Buffer);
+		if(c==CmdType)	return TRUE;
+		if((GetUS() - startTime) >
+		   TimeOut * (TICKS_PER_SECOND/1000))
+			return FALSE;
+	}
+}
+
+
+int BT232GetChar(U32 timeout)
+{
+	char CharBuffer[10];
+	if(BT232Wait(MCU_CMD_KEY, timeout, CharBuffer))
+	{
+		return CharBuffer[0];
+	}
+	else
+		return 0;
+}
+
+int BT232GetResponseMS(U32 timeout)
+{
+//	int c;
+	U32 startTime;
+	startTime=GetUS();
+	while(1)
+	{
+		if(CheckBT232()==MCU_CMD_REPONSE) return TRUE;
+		if((GetUS() - startTime)>timeout * TICKS_PER_MS)
+			break;
+	}
+	return FALSE;
+}
+//Disable Watchdog:0x53 0x53 108 147 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+#define CMDLEN 22
+//53 53 cmd 0xff-cmd 
+int ExCommand(char cmd, char *data, int DataLen, int Delay)
+{
+	U8 buf[CMDLEN+16];
+	U32 s,i,len;
+	//int etime=GetTickCount();
+	if(gOptions.IsModule) return FALSE;
+	if(MCUVersion>7)
+		while(CheckBT232()!=MCU_CMD_NONE);
+	buf[0]=buf[1]=0x53;
+	buf[2]=cmd;  buf[3]=0xFF-buf[2];
+	s=0;
+	len=CMDLEN;
+	if(len<DataLen) len+=16;
+	for(i=4; i<len-1; i++)
+	if(i-4<DataLen)
+	{
+		buf[i]=data[i-4];
+		s+=buf[i];
+	}
+	else
+		buf[i]=0;
+	buf[len-1]=s & 0xFF;
+	//DBPRINTF("MCU_VERSION:%d\n",MCUVersion);
+	s=MCUVersion>7?10:1;
+	while(s--)
+	{
+		//DBPRINTF("ExCommand begin write:%d\n",GetTickCount()-etime);
+		/*for(i=0; i<len; i++)
+			bt232.write(buf[i]);*/
+		bt232.write_buf(buf,len);
+		//bt232.write_buf(buf10,1);
+		//bt232.write(0);
+	//	bt232.tcdrain();
+		//DBPRINTF("ExCommand end write(cmd=%d,DataLen=%d):%d\n",cmd,DataLen,GetTickCount()-etime);
+		if((MCUVersion>7) && cmd!=MCU_CMD_RTC)
+		{
+			if(BT232GetResponseMS(200))
+			{
+				//DBPRINTF("ExCommand BT232GetResponseMS:%d\n",GetTickCount()-etime);
+				return TRUE;
+			}
+		}
+		else
+		{
+			//DBPRINTF("ExCommand delay:%d\n",Delay);
+			DelayMS(Delay);
+			return TRUE;
+		}
+		DBPRINTF("try command to MCU:%d\n",10-s);
+	}
+	return FALSE;
+}
+
+int GetMCUVersion(void)
+{
+	int i=20;
+	char buf[20];
+	while(i--)
+	{
+		buf[0]=0;
+		ExCommand(MCU_CMD_VERSION, NULL, 0, 2);
+		if(BT232Wait(RCMD_VERSION, 100, buf)) return buf[0];
+	}
+	return 0;
+}
+
+/*
+void ExWriteCharLCD(int line, int index, char ch)
+{
+	char buf[3];
+	if(LCDBuffer[line][index]==ch) return;
+	buf[0]=line;buf[1]=index;buf[2]=ch;
+	RESETEXCMD;
+	ExCommand(11, buf, 3, 10);
+	LCDBuffer[line][index]=ch;
+	LCDFlagBuffer[line][index]=0;
+	ExCommand(11, buf, 3, 10);
+}
+*/
+void ExBeepByMCU(int delay)
+{
+	int i=0;
+	ExCommand(3, (char*)&delay, 1, 10);
+}
+
+void ExAuxOut(int AuxOnTime, int OpenDoorDelay)
+{
+	U8 AuxTime[2];
+	if(gOptions.LockFunOn&8)
+	{
+		if(AuxOnTime>0 && OpenDoorDelay>0)
+			gAuxOutDelay=(int)((AuxOnTime*20)/1000)+2;
+	}
+	else
+		gAuxOutDelay=(int)((AuxOnTime*20)/1000)+2;
+	AuxTime[0]=AuxOnTime;
+	AuxTime[1]=OpenDoorDelay;
+	ExCommand(4, (char*)AuxTime, 2, 10);
+}
+
+void ExSetAuxOutDelay(int AuxOnTime, int OpenDoorDelay, int DoorSensorMode)
+{
+	U8 AuxTime[3];
+	AuxTime[0]=AuxOnTime;
+	AuxTime[1]=OpenDoorDelay;
+	AuxTime[2]=DoorSensorMode;
+	ExCommand(RMCU_CMD_AUXOUT_LEN, (char*)AuxTime, 3, 10);
+}
+
+BOOL ExPowerOff(int Cmd)  
+{
+	int Suspend=Cmd;
+	char buf[3]={0x5a,0xa5,0};
+	buf[2]=Suspend;
+	ExCommand(30, buf, 3, 0);
+	buf[2]=Suspend;
+	ExCommand(30, buf, 3, 0);
+	buf[2]=Suspend;
+	ExCommand(30, buf, 3, 0);
+	return TRUE;
+}
+
+void ExPowerOffStart(void)
+{
+	ExCommand(24, NULL, 0, 0);
+	ExCommand(24, NULL, 0, 0);
+}
+
+void ExPowerRestart(void)
+{
+	char buf[3]={0x5a,0xa5,0};
+	ExCommand(32, buf, 3, 0);
+}
+
+void ExSetPowerOnTime(int Hour, int Minute)
+{
+	char buf[2];
+	buf[0]=HEX2BCD(Hour & 0xFF);
+	buf[1]=HEX2BCD(Minute & 0xFF);
+	ExCommand(31, buf, 2, 0);
+}
+
+void ExPlayVoiceFromByMCU(int VoiceStart, int VoiceEnd)
+{
+	char buf[3];
+	buf[0]=255;
+	buf[1]=VoiceStart;
+	buf[2]=VoiceEnd;
+	ExCommand(1, buf, 3, 2);
+//	ExCommand(1, (char*)&VoiceIndex, 1, 2);
+}
+
+void ExPlayVoiceByMCU(int VoiceIndex)
+{
+	ExPlayVoiceFromByMCU(VoiceSection[VoiceIndex*2],VoiceSection[VoiceIndex*2+1]);
+}
+
+void ExLightLED(int LEDIndex, int Light)
+{
+#ifndef ZEM500
+	if (gOptions.RFCardFunOn&&(!gOptions.IsWiegandKeyPad)&&(!gOptions.MifareAsIDCard)&&(!gOptions.iCLASSAsIDCard)) return;//iCLSRW
+#endif
+	if (LEDIndex==LED_RED)
+	{	
+			GPIOSetLevel(IO_FUN_RED_LED, Light);
+	}
+	else
+	{
+			GPIOSetLevel(IO_FUN_GREEN_LED, Light);
+	}
+	//DBPRINTF("ExLightLED(%d,%d),iwk=%d\n",LEDIndex,Light,gOptions.IsWiegandKeyPad);
+}
+
+int ClockEnabled=FALSE;
+
+int ExIsLockAndBellSame(void)
+{
+	//return (GPIO_PIN[IO_FUN_BELL]==INVALID_IO_PIN);
+	return 1;
+}
+
+void ExEnableClock(int Enable)
+{
+	DelayUS(10*10);
+	if(Enable) Enable=GetPowerKeyCode();  //�ڸ��ֽڱ�ʾ��Դ����
+	ClockEnabled=Enable;
+	if((gLCDHeight<64)||(gOptions.MenuStyle==MenuStyle_ICON))
+	{
+		if(Enable)
+			ExCommand(23, (char*)&Enable, 1, 5);
+		Enable=0;
+	}
+#ifdef FAMILYPLAN
+	Enable=0;
+#endif
+	ExCommand(23, (char*)&Enable, 1, 8);
+	//DBPRINTF("EnableClock()\n");
+}
+
+void ExShowLogo(int Language)
+{
+	ExCommand(25, (char*)&Language, 1, 20);
+}
+
+void ExGetLCDSize(int *Width, int *Height, int *Data)
+{
+	int c=5;
+	char buf[20];
+	*Width=128;
+	*Height=64;
+	if(MCUVersion<4)
+	{
+		return;
+	}
+	while(c--)
+	{
+		buf[0]=0;
+		ExCommand(RCMD_LCD_SIZE, NULL, 0, 2);
+		if(BT232Wait(RCMD_LCD_SIZE, 100, buf))
+			break;
+	}
+	if(c>0)
+	{
+		*Height=((BYTE*)buf)[0];
+		*Width=((BYTE*)buf)[1];
+		if(MCUVersion>=6)
+			*Data=((BYTE*)buf)[2]|((BYTE*)buf)[3]<<8|((BYTE*)buf)[4]<<16|((BYTE*)buf)[5]<<24;
+		else
+			*Data=0;
+	}
+}
+/*
+void ExLCDOutText(int Row, int Col, char *s, char Modify)
+{
+	char buf[20];
+	int len=strlen(s)+1;
+	if(Row>=gLCDRowCount) return;
+	if(len+Col>gLCDCharWidth) len=gLCDCharWidth-Col;
+	buf[0]=Row;
+	buf[1]=Col;
+	buf[2]=Modify;
+	memcpy(buf+3, s, len>12?12:len);
+	buf[15]=0;
+	ExCommand(CMD_LCD_STR, buf, 15, 20);
+	if(len>12)
+	{
+		Col+=12;
+		buf[1]=Col;
+		len-=12;
+		if(len+Col>gLCDCharWidth) len=gLCDCharWidth-Col;
+		memcpy(buf+3, s+12, len>12?12:len);
+		buf[15]=0;
+		ExCommand(CMD_LCD_STR, buf, 15, 20);
+	}
+}
+*/
+#define MAXPIXELCNT	10
+static int PixelCnt=0;
+#define CHECKDELAY(i) \
+	if(MCUVersion>=5)\
+		i=10;\
+	else if(MAXPIXELCNT==++PixelCnt)\
+	{\
+		i+=5;\
+		PixelCnt=0;\
+	}\
+
+/*
+ExPutPixelBuffer16H 是横�? 8×16 图像点阵显示
+ExPutPixelBuffer16 �? 纵向 16×8
+ExPutPixelBuffer_32 �?16×16
+*/
+
+void ExPutPixelBuffer16H(int row, int col, unsigned char *Buffer)
+{
+	char Buf[20];
+	int i;
+	if(row>7) return;
+	if(col>15) return;
+	Buf[3]=col+row*16;
+	for(i=0;i<4;i++)
+		((U32*)(Buf+4))[i]=((U32*)Buffer)[i];
+	i=(gLCDRowCount<4)?7:(MCUVersion>3)?4:(MCUVersion>1)?5:7;
+	CHECKDELAY(i)
+	ExCommand(11, Buf+3, 17, i);
+}
+
+void ExPutPixelBuffer16(int row, int col, unsigned char *Buffer)
+{
+	char Buf[20];
+	int i;
+	if(row>7) return;
+	if(col>15) return;
+	Buf[3]=col+row*16;
+	for(i=0;i<4;i++)
+		((U32*)(Buf+4))[i]=((U32*)Buffer)[i];
+	i=8;
+	CHECKDELAY(i)
+	ExCommand(12, Buf+3, 17, i);
+}
+
+void ExPutPixelBuffer_32(int row, int col, unsigned char *Buffer)
+{
+	char Buf[36];
+	int i;
+	//int etime=GetTickCount();
+	Buf[3]=col+row*16;
+	for(i=0;i<8;i++)
+		((U32*)(Buf+4))[i]=((U32*)Buffer)[i];
+	i=12;
+	CHECKDELAY(i)
+	ExCommand(13, Buf+3, 33, i);
+}
+
+void ExPutPixelBuffer32(int row, int col, unsigned char *Buffer)
+{
+/*	char Buf[20];
+	int i;
+	Buf[3]=col+row*2*16;
+	for(i=0;i<8;i++)
+		((U32*)(Buf+4))[i]=((U32*)Buffer)[i];
+	RESETEXCMD;
+	ExCommand(13, Buf+3, 33, 200);*/
+	if(row>7) return;
+	if(col>15) return;
+	PixelCnt++;
+	if(col==7)
+	{
+		char Buf[16];
+		memcpy(Buf, Buffer+8, 8);
+		memcpy(Buffer+8, Buffer+16, 8);
+		memcpy(Buf+8, Buffer+24, 8);
+		ExPutPixelBuffer16(row*2, col, Buffer);
+		ExPutPixelBuffer16(row*2, col+1, Buf);
+	}
+	else if(MCUVersion>1)
+	{
+		ExPutPixelBuffer_32(row*2, col, Buffer);
+	}
+	else
+	{
+		ExPutPixelBuffer16H(row*2, col, Buffer);
+		ExPutPixelBuffer16H(row*2+1, col, Buffer+16);
+	}
+}
+
+void ExClearLCD(void)
+{
+	char buf[4];
+	buf[0]=1;buf[1]=1;buf[2]=1;buf[3]=1;
+	ExEnableClock(FALSE);
+	RESETEXCMD;
+	ExCommand(2,buf,4,10);
+}
+
+int ExInit(void)
+{
+	if(!gOptions.IsModule)
+	{
+		gLCDWidth=122;
+		gLCDHeight=32;
+		MCUVersion=GetMCUVersion();
+		DBPRINTF("MCUVersion:%d\n",MCUVersion);
+		ExGetLCDSize(&gLCDWidth, &gLCDHeight, &gLCDData);
+		LoadVoiceParam();
+	}
+	else
+	{
+		gLCDWidth=0;
+		gLCDHeight=0;
+		MCUVersion=0;
+	}
+	DecodeTime(0, &MachineBaseTime);
+	gHaveRTC=!LoadInteger("NORTC",0);
+	return 0;
+}
+
+void ExLCDChangeBright(int Bright)
+{
+	ExCommand(CMD_LCD_BRIGHT, (char*)&Bright, 1, 2);
+}
+TTime MachineBaseTime;
+int gHaveRTC=-1;	//-1 - Unknown, 0 - None, 1 - Have RTC
+
+int ReadSysTime(void)
+{
+	int res=Timer_None;
+	TTime t=MachineBaseTime;
+	time_t tt;
+	U32 ct=GetUS(), sec=ct/TICKS_PER_SECOND;
+	t.tm_year-=1900;
+	t.tm_mon-=1;
+	tt=mktime(&t)+sec;
+	t=*localtime(&tt);
+	t.tm_year+=1900;
+	t.tm_mon+=1;
+	if(t.tm_sec!=gCurTime.tm_sec) res=Timer_Second;
+	if(t.tm_min!=gCurTime.tm_min) res=Timer_Minute;
+	gCurTime=t;
+	if(ct>0x7f000000)
+	{
+		MachineBaseTime=t;
+		//zzResetBaseTime();
+	}
+	return res;
+}
+
+TTime *CalcDays(TTime *t)
+{
+	int y,c;
+	y=t->tm_year;
+	c=1+(y-1)/4;
+	c=c+365*(y-1);  //Total days count
+	t->tm_yday=0;
+	for(y=1;y<t->tm_mon;y++)
+	{
+		if(y==2)
+		{
+			if(t->tm_year%4==0) t->tm_yday+=29; else t->tm_yday+=28;
+		}
+		else if(y==4 || y==6 || y==9 || y==11)
+			t->tm_yday+=30;
+		else
+			t->tm_yday+=31;
+	}
+	t->tm_yday+=t->tm_mday;
+	c+=t->tm_yday;
+	t->tm_wday=(c%7+6)%7;
+	//2000-1-1==6
+	return t;
+}
+
+void SetRTCTimeByMCU(TTime *tt)
+{
+	char buf[10];
+	int year;
+	if(gHaveRTC==1)
+	{
+		CalcDays(tt);
+		buf[0]=HEX2BCD(tt->tm_sec);
+		buf[1]=HEX2BCD(tt->tm_min);
+		buf[2]=HEX2BCD(tt->tm_hour);
+		buf[3]=HEX2BCD(tt->tm_mday);
+		buf[4]=HEX2BCD(tt->tm_mon+1);	//diff from ZEM100
+		buf[5]=(tt->tm_wday+6)%7+1;
+		year=tt->tm_year%100;
+		buf[6]=HEX2BCD(year);
+		DBPRINTF("Settime:%d-%d-%d %d:%d:%d\n",year,tt->tm_mon,tt->tm_mday,tt->tm_hour,tt->tm_min,tt->tm_sec);
+		ExCommand(21,buf,7,5);
+		DelayMS(1000); //DelayMS(2500);
+	}
+	MachineBaseTime=*tt;
+	//ResetBaseTime();
+}
+
+void GetRTCTimeByMCU(TTime *t)
+{
+	if(gOptions.IsModule && gHaveRTC==-1)
+		gHaveRTC=0;
+	if(gHaveRTC!=0)
+	{
+		char buffer[10];
+		int i=4;
+		int TimeOK=FALSE;
+		while(i-->0)
+		{
+			//read RTC
+			ExCommand(22,NULL,0,5);
+			if(BT232Wait(MCU_CMD_RTC,1000,buffer+1))
+			{
+				buffer[0]=0;
+				if(0==*(int*)buffer && 0==((int*)buffer)[1])//ȫ��
+				{
+					gHaveRTC=0;
+				}
+				else if(Buff2Time(buffer+1, &gCurTime))//RTC 
+				{
+					TimeOK=TRUE;
+					gHaveRTC=1;
+				}
+				else
+				{
+					TimeOK=FALSE;
+					gHaveRTC=1;
+				}
+				break;
+			}
+			DelayUS(1000);
+		}
+		if((!TimeOK) && gHaveRTC==1)	//RTC ���ң���д
+		{
+			;
+		}
+		else if(gHaveRTC!=1)
+			ReadSysTime();
+	}
+	else
+	{
+		return ;
+		DBPRINTF("readSysTime,hour=%d,",gCurTime.tm_hour);
+		ReadSysTime();
+		DBPRINTF("hour2=%d\n",gCurTime.tm_hour);
+	}
+	if(t)
+	{
+		memcpy(t, &gCurTime, sizeof(TTime));
+	}
+//zz	return gCurTime;
+}
+
+void ExOpenRF(void)
+{
+	char buf[4]={1,1,1,1};
+	ExCommand(RCMD_RF_ENABLED, buf, 1, 5);
+	ExCommand(RCMD_RF_ENABLED, buf, 1, 5);
+}
+
+int ExAlarmOnByMCU(int Delay)
+{
+	char buf[4]={0,0,0,0};
+	if(Delay>254) buf[0]=255;
+	return ExCommand(RMCU_CMD_ALARM, buf, 1, 5);
+}
+
+int ExAlarm(int Index, int Delay)
+{
+	//Output a LOW pulse
+	if(Index==0)
+	{
+		ExAlarmOnByMCU(Delay);
+		gAlarmDelay=Delay;
+	}
+	return TRUE;
+}
+
+int ExAlarmOffByMCU(void)
+{
+	char buf[4]={0,0,0,0};
+	return ExCommand(RMCU_CMD_ALARM, buf, 1, 5);
+}
+
+int ExAlarmOff(int Index)
+{
+	//Output a LOW pulse
+	ExAlarmOffByMCU();
+	return TRUE;
+}
+
+int ExFeedWatchDog(int i)
+{
+	return ExCommand(RMCU_CMD_WATCHDOG, (char*)&i, 1, 1);
+}
+
+void FinalSystem(void)
+{
+	while(1);
+}
+
+void ExCheckAlarm(void)
+{
+	ExCommand(MCU_CMD_DOOR, NULL, 0, 0);
+}
+
+void ExBell(U32 DelayTime)
+{
+	gBellDelay=DelayTime;
+	if(((gOptions.LockFunOn==0) || (gOptions.LockOn==0)) && (ExIsLockAndBellSame()))
+		ExAuxOut(0xFF,0);
+	/*zzelse if(!ExIsLockAndBellSame())
+		GPIOSetLevel(IO_FUN_BELL, 1);*/
+}
+
+int ExBellOff(void)
+{
+	if(((gOptions.LockFunOn==0) || (gOptions.LockOn==0)) && (ExIsLockAndBellSame()))
+		ExAuxOut(0,0);
+	/*zzelse if(!ExIsLockAndBellSame())
+		GPIOSetLevel(IO_FUN_BELL, 0);*/
+	return TRUE;
+}
+
+int Buff2Time(char *buffer, TTime *Value)
+{
+	int v;
+	TTime t;
+	v=BCD2HEX(buffer[0]);
+	if((v<0) || (v>59)) return 0;
+	t.tm_sec=v;
+	v=BCD2HEX(buffer[1]);
+	if((v<0) || (v>59)) return 0;
+	t.tm_min=v;
+	v=BCD2HEX(buffer[2]);
+	if((v<0) || (v>23)) return 0;
+	t.tm_hour=v;
+	v=BCD2HEX(buffer[3]);
+	if((v<0) || (v>31)) return 0;
+	t.tm_mday=v;
+	v=BCD2HEX(buffer[4]);
+	if((v<0) || (v>12)) return 0;
+	t.tm_mon=v;
+	t.tm_year=BCD2HEX(buffer[6])%100;
+	//DBPRINTF("Buff2Time:%d-%d-%d %d:%d:%d\n",t.tm_year,t.tm_mon,t.tm_mday,t.tm_hour,t.tm_min,t.tm_sec);
+	CalcDays(&t);
+#ifdef ZEM500	
+	t.tm_mon-=1;
+	t.tm_year+=100;
+#endif		
+	*Value=t;
+	return 1;
+}
+
+void LoadVoiceParam(void)
+{
+	char Voices[128];
+	if(LoadStr("Voices",Voices))
+	{
+		int index, j;
+		index=0;
+		for(j=0;j<(int)strlen(Voices);j+=2)
+			VoiceSection[index++]=Hex2Char(Voices+j)*16+Hex2Char(Voices+j+1);
+	}
+}
+
+//Open LCM
+int ExLCDOpen(void)
+{
+	LCDInit();
+	ExInit();	//init MCU correlation
+	return 1;
+}
+
+//Close LCM
+void ExLCDClose(void)
+{
+	LCD_Final();	
+}
+
+void LCD_ShowImg(int row, int col, int bytes, unsigned char *Buffer)
+{
+	return;
+}
+
+void ExBellByMCU(int Index)
+{
+	char buf[4]={0};
+	if(Index)	buf[0]=0xff;
+	DBPRINTF("BELL:%d\n",buf[0]);
+	ExCommand(RCMD_OUT_BELL,buf,1,20);	
+}
+
+void ExEnableBeepByMCU(int Index)
+{
+	char buf[4]={0};
+	if(Index)	buf[0]=1;
+	ExCommand(RCMD_BEEP_ENABLE,buf,1,20);		
+}
+
+
+void ExSetExtWGIn(int BitsCount, int PulseWidth, int PulseInterval)
+{
+	char buf[5];
+	DBPRINTF("BitsCount=%d,PulseWidth=%d,PulseInterval=%d\n",BitsCount,PulseWidth,PulseInterval);
+	buf[0]=BitsCount&0xFF;
+	*(unsigned short*)(buf+1)=PulseWidth&0xffff;
+	*(unsigned short*)(buf+3)=PulseInterval&0xffff;
+	ExCommand(RCMD_WG_OPTIONS,buf,5,20);
+}
