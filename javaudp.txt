@@ -1,0 +1,879 @@
+中控考勤机的Java实现协议
+
+发表时间:2009-09-10 |  分类: Java | 阅读全文 |  点评(822)»
+
+最近项目有个需求：在原来的web系统上集成培训考勤模块。购买的是中控的考勤机。在项目的阶段遇到下面一些问题。
+
+交互问题
+
+服务器是Linux，考勤机提供的SDK是DLL，而且考勤机是内嵌了一个Linux，内置了一个UDP服务器，但是厂家没有提供从Linux服务器跟考勤机互动的解决方案。
+
+关于解决方案，最开始考虑到是下面这种。
+
+image
+这种解决方案，要通过一个中转服务器，而且必须得Windows的（因为要用到SDK的DLL），如此就增加了部署的成本，而且从技术实现来说，这种做法非常Ugly，因此非万不得已，不考虑采用这种方法。如果能实现下面一种方案就好啦。
+image 就是说，在Linux服务器上用Java直接通过UDP协议跟考勤机交互。
+
+OK，思路有了，既然没提供Java的SDK，那么便想到如果能到到中控的UDP协议文档，也能自己做。便打了30+个电话，终于联系到中控厂家。但是对方说：给你也行，但是要签个保密协议，给点钱。靠！我买你的产品，在上面做开发，还要我给钱？！什么道理。
+
+算。靠自己！
+
+于是，在网上翻资料。首先看了中控的中文论坛，发现问问题的人很多，回答问题的人很少，中文论坛基本是个摆设。
+
+继续翻，翻到了中控的香港英文论坛。这是另一番景象啊。问问题的人，回答问题的人也多，而且还有很多我想要的东西，包括一个底层协议文档。哈哈！贴一下论坛地址（中文就算啦）：http://hk.zksoftware.com/bbs/
+
+结合抓包软件Ethereal，就可以分析协议了。
+
+Attendent Log的读取
+
+首先看看协议文档里对Attendent Log的数据定义
+
+typedef struct _AttLog_{
+
+  Int PIN;   //U16 PIN, user number
+
+  char verified;// verifying method
+
+  time_t time_second; //tiem, time code is user-defined time code.
+
+  char status; // attendance state
+
+}TAttLog, *PAttLog;
+经过抓包分析（此处省去抓包过程1000字。。。），发现该协议存在一点差异，差异如下：
+
+time_t是该结构的最后一个成员
+C语言的time_t是指格林威治时间1970-1-1 00:00:00到目前所隔的秒数，但是中控的time_t是他自己定义的，这里的time_t是指 格林威治时间2000-1-1 00:00:00到目前所隔的秒数。所以，当向考勤机请求下载Attendent Log的时候，返回的数据格式包应该如下。
+image
+
+恩，数据格式已经搞定，到此刻，我才知道，原来我这几天做的事，要写出来还有很多很多，例如数据包校验的算法，高低位错位的传输，还有一些数据定义的特殊格式。这些都得一一说明。
+
+OK，代码时间：
+
+/**
+
+ *
+
+ */
+
+package com.sa.wa.service.training;
+ 
+
+
+import java.io.IOException;
+
+import java.util.ArrayList;
+
+import java.util.Arrays;
+
+import java.util.List;
+
+
+import com.sa.wa.common.util.ArrayHelper;
+
+import com.sa.wa.model.training.ZKAttendentLog;
+
+import com.sa.wa.model.training.ZKUser;
+
+
+/**
+
+ * The Class is used to exchange data with ZK record machine. The operation include send command,
+
+ * receive data, etc in UDP protocal.
+
+ *
+
+ * @author Tony Qiu
+
+ *
+
+ */
+
+public class ZKOperator {
+
+
+	public String getHost() {
+
+ 	return host;
+
+ }
+
+
+	public void setHost(String host) {
+
+ 	this.host = host;
+
+ }
+
+
+	public int getPort() {
+
+ 	return port;
+
+ }
+
+
+	public void setPort(int port) {
+
+ 	this.port = port;
+
+ }
+
+
+	private UdpClient udpClient;
+
+ private String host;
+
+ private int port;
+
+ private byte[] sessionID = new byte[2];
+
+ private byte[] currentReplayId = new byte[2];
+
+
+	public ZKOperator(String host, int port) {
+
+ 	this.host = host;
+
+ 	this.port = port;
+
+ }
+
+
+	public ZKOperator() {
+
+
+	}
+
+
+	/**
+
+  * get all users from ZK record machine.
+
+  *
+
+  * @return
+
+  * @throws ZKOperatorException
+
+  */
+
+ public List getAllUsers() throws ZKOperatorException {
+
+ 	if ((sessionID[0] | sessionID[1]) == (byte) 0x0) {
+
+ 		connect();
+
+ 	}
+
+ 	List list = null;
+
+ 	byte[] sentPackage = new byte[] { (byte) 0xdf, (byte) 0x05, (byte) 0x00, (byte) 0x00 };
+
+
+		sentPackage = ArrayHelper.join(sentPackage, sessionID);
+
+ 	// sentPackage = ArrayHelper.join(sentPackage, new byte[] { (byte) 0x01, (byte) 0x00 });
+
+ 	currentReplayId = increaReplayId(currentReplayId);
+
+ 	sentPackage = ArrayHelper.join(sentPackage, increaReplayId(currentReplayId));
+
+ 	sentPackage = ArrayHelper.join(sentPackage, new byte[] { (byte) 0x01, (byte) 0x09,
+
+ 			(byte) 0x00, (byte) 0x05, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+
+ 			(byte) 0x00, (byte) 0x00, (byte) 0x00 });
+
+ 	// check sum
+
+ 	sentPackage = addCheckSum(sentPackage);
+
+
+		byte[] receive;
+
+ 	try {
+
+ 		udpClient.send(host, port, sentPackage);
+
+ 		receive = udpClient.receive(host, port);
+
+ 		System.out.println("receive:"+ArrayHelper.bytesToHexString(receive));
+
+
+		} catch (IOException ioe) {
+
+ 		resetConnection();
+
+ 		throw new ZKOperatorException("cann't transmit data with ZK record machie.");
+
+ 	}
+
+ 	list = getUsersFromBytes(receive);
+
+
+		return list;
+
+ }
+
+
+	/**
+
+  * get all user from ZK record machine
+
+  *
+
+  * @return
+
+  * @throws Exception
+
+  */
+
+ public List getAllAttendtLogs() throws ZKOperatorException {
+
+ 	if ((sessionID[0] | sessionID[1]) == (byte) 0x0) {
+
+ 		connect();
+
+ 	}
+
+ 	List list = new ArrayList();
+
+ 	;
+
+ 	byte[] sentPackage = new byte[] { (byte) 0x0d, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+
+ 	sentPackage = ArrayHelper.join(sentPackage, sessionID);
+
+ 	// sentPackage = ArrayHelper.join(sentPackage, new byte[] { (byte) 0x01, (byte) 0x00 });
+
+ 	currentReplayId = increaReplayId(currentReplayId);
+
+ 	sentPackage = ArrayHelper.join(sentPackage, increaReplayId(currentReplayId));
+
+ 	// check sum
+
+ 	sentPackage = addCheckSum(sentPackage);
+
+ 	byte[] receive;
+
+ 	try {
+
+ 		udpClient.send(host, port, sentPackage);
+
+
+			while (true) {
+
+ 			receive = udpClient.receive(host, port);
+
+ 			if (calReversedValue(getCommand(receive)) == 2000)
+
+ 				break;
+
+ 			else if (calReversedValue(getCommand(receive)) == 1501)
+
+ 				list.addAll(getAttendentLogFromBytes(receive));
+
+ 		}
+
+ 	} catch (IOException ioe) {
+
+ 		resetConnection();
+
+ 		throw new ZKOperatorException("cann't transmit data with ZK record machie.");
+
+ 	}
+
+ 	return list;
+
+ }
+
+
+	public boolean addUser(ZKUser user) throws ZKOperatorException {
+
+ 	if ((sessionID[0] | sessionID[1]) == (byte) 0x0) {
+
+ 		connect();
+
+ 	}
+
+ 	byte[] send = new byte[] { (byte) 0x08, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+
+ 	send = ArrayHelper.join(send, sessionID);
+
+ 	// sentPackage = ArrayHelper.join(sentPackage, new byte[] { (byte) 0x01, (byte) 0x00 });
+
+ 	currentReplayId = increaReplayId(currentReplayId);
+
+ 	send = ArrayHelper.join(send, increaReplayId(currentReplayId));
+
+ 	send = ArrayHelper.join(send, reversed(user.getPin(), 2));
+
+ 	send = ArrayHelper.join(send, new byte[6]);
+
+ 	send = ArrayHelper.join(send, reversed(user.getPin(), 8));
+
+ 	send = ArrayHelper.join(send, reversed(user.getCardNo(), 5));
+
+ 	send = ArrayHelper.join(send, new byte[]{(byte)0x01,(byte) 0x00,(byte) 0x00});
+
+ 	send = ArrayHelper.join(send, reversed(user.getPin(), 4));
+
+ 	// check sum
+
+ 	send = addCheckSum(send);
+
+ 	System.out.println(ArrayHelper.bytesToHexString(send));
+
+ 	try {
+
+ 		udpClient.send(host, port, send);
+
+ 		byte[] receive = udpClient.receive(host, port);
+
+ 		if (calReversedValue(getCommand(receive)) == 2000) {
+
+ 			return true;
+
+ 		}
+
+ 	} catch (IOException ioe) {
+
+ 		resetConnection();
+
+ 		throw new ZKOperatorException("cann't transmit data with ZK record machie.");
+
+ 	}
+
+ 	return false;
+
+ }
+
+
+	public boolean addUser(int cardNo) throws ZKOperatorException {
+
+ 	List users = getAllUsers();
+
+ 	int maxUserPin = 0;
+
+ 	for (ZKUser u : users) {
+
+ 		if (u.getPin() > maxUserPin)
+
+ 			maxUserPin = u.getPin();
+
+ 	}
+
+ 	ZKUser user = new ZKUser();
+
+ 	user.setPin(maxUserPin + 1);
+
+ 	user.setCardNo(cardNo);
+
+ 	return addUser(user);
+
+
+	}
+
+
+	/**
+
+  * write some charaters in the LCD of ZK record machine
+
+  *
+
+  * @param content
+
+  * @throws Exception
+
+  */
+
+ public boolean writeLCD(String content) throws ZKOperatorException {
+
+ 	if ((sessionID[0] | sessionID[1]) == (byte) 0x0) {
+
+ 		connect();
+
+ 	}
+
+
+		// command=4200 checksum=0000 sessionID={sessionID} replayID = 0100
+
+ 	byte[] sentPackage = new byte[] { (byte) 0x42, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+
+ 	sentPackage = ArrayHelper.join(sentPackage, sessionID);
+
+ 	// sentPackage = ArrayHelper.join(sentPackage, new byte[] { (byte) 0x01, (byte) 0x00 });
+
+ 	currentReplayId = increaReplayId(currentReplayId);
+
+ 	sentPackage = ArrayHelper.join(sentPackage, increaReplayId(currentReplayId));
+
+ 	// package date, write "OK" in LCD
+
+ 	sentPackage = ArrayHelper.join(sentPackage, new byte[] { (byte) 0x00, (byte) 0x00,
+
+ 			(byte) 0x00 });
+
+ 	sentPackage = ArrayHelper.join(sentPackage, content.getBytes());
+
+ 	sentPackage = ArrayHelper.join(sentPackage, new byte[] { (byte) 0x00 });
+
+ 	// check sum
+
+ 	sentPackage = addCheckSum(sentPackage);
+
+ 	byte[] receive;
+
+ 	try {
+
+ 		udpClient.send(host, port, sentPackage);
+
+ 		receive = udpClient.receive(host, port);
+
+ 		if (calReversedValue(getCommand(receive)) == 2000)
+
+ 			return true;
+
+ 		else
+
+ 			return false;
+
+ 	} catch (IOException ioe) {
+
+ 		throw new ZKOperatorException("cann't transmit data with ZK record machie.");
+
+ 	}
+
+ }
+
+
+	/**
+
+  * Connect to the ZK record machine. when connected, the method will get the seesion ID and the
+
+  * replay id. And this method won't be invoked by the other class.
+
+  *
+
+  * @throws ZKOperatorException
+
+  */
+
+ private void connect() throws ZKOperatorException {
+
+ 	if (host == null || "".equals(host) || port < -1) {
+
+ 		throw new ZKOperatorException("The host and the port cann't be null");
+
+ 	}
+
+ 	try {
+
+ 		if ((sessionID[0] | sessionID[1]) == (byte) 0x0) {
+
+ 			if (udpClient == null) {
+
+ 				udpClient = new UdpClient();
+
+ 				udpClient.setSoTimeout(5000);
+
+ 			}
+
+ 			byte[] connectCommand = new byte[] { (byte) 0xe8, (byte) 0x03, (byte) 0x17,
+
+ 					(byte) 0xfc, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+
+
+				udpClient.send(host, port, connectCommand);
+
+ 			byte[] receive = udpClient.receive(host, port);
+
+ 			sessionID = getSessionID(receive);
+
+ 			currentReplayId = getCurrentReplayId(receive);
+
+
+			}
+
+ 	} catch (IOException ioe) {
+
+ 		throw new ZKOperatorException("Cannot connect the machine : " + host + ":" + port);
+
+ 	}
+
+ }
+
+
+	private void resetConnection() {
+
+ 	sessionID[0] = 0x0;
+
+ 	sessionID[1] = 0x0;
+
+ 	currentReplayId[0] = 0x0;
+
+ 	currentReplayId[1] = 0x0;
+
+ }
+
+
+	/**
+
+  * get the command from the receive data
+
+  *
+
+  * @param data
+
+  * @return command
+
+  */
+
+ private byte[] getCommand(byte[] data) {
+
+ 	byte[] retBytes = new byte[2];
+
+ 	System.arraycopy(data, 0, retBytes, 0, 2);
+
+ 	return retBytes;
+
+ }
+
+
+	/**
+
+  * get the session id from the receive data
+
+  *
+
+  * @param data
+
+  * @return session id
+
+  */
+
+ private byte[] getSessionID(byte[] data) {
+
+ 	byte[] retBytes = new byte[2];
+
+ 	System.arraycopy(data, 4, retBytes, 0, 2);
+
+ 	return retBytes;
+
+ }
+
+
+	/**
+
+  * get the session id from the receive data
+
+  *
+
+  * @param data
+
+  * @return current replay id
+
+  */
+
+ private byte[] getCurrentReplayId(byte[] data) {
+
+ 	byte[] retBytes = new byte[2];
+
+ 	System.arraycopy(data, 6, retBytes, 0, 2);
+
+ 	return retBytes;
+
+ }
+
+
+	/**
+
+  * increase the replay id, replayID = replayID + 1; and return in byte, the low 8 bit in the
+
+  * first, and the high 8 bit in the last.
+
+  *
+
+  * @param curReplayId
+
+  * @return
+
+  */
+
+ private byte[] increaReplayId(byte[] curReplayId) {
+
+ 	int curRplayId = ((0xFF & curReplayId[1]) << 8) + (0xFF & curReplayId[0]);
+
+ 	curRplayId++;
+
+ 	byte[] bytes = new byte[2];
+
+ 	bytes[0] = (byte) (curRplayId & 0xFF);
+
+ 	curRplayId >>= 8;
+
+ 	bytes[1] = (byte) (curRplayId & 0xFF);
+
+ 	return bytes;
+
+
+	}
+
+
+	/**
+
+  * calculate the sum of the package which to be send. and the Algorithm is: accumulate the whole
+
+  * packet on the basis of unsigned short. It exceeds 2147483648 (long 4 bytes), cut the exceeded
+
+  * bits as a new 4 bytes long, add the new long with the origial long. Take bitwise inverse of
+
+  * the accumulated value, and then change it to unsigned short (2 bytes) to get the check sum.
+
+  *
+
+  * @param check
+
+  *            sum byte
+
+  * @return
+
+  */
+
+ private byte[] addCheckSum(byte[] data) {
+
+ 	int sum = 0;
+
+ 	for (int i = 0; i < data.length;) {
+
+ 		if (i == 2) {
+
+ 			i += 2;
+
+ 			continue;
+
+ 		}
+
+ 		if ((i + 1) < data.length)
+
+ 			sum = sum + ((0xFF & data[i + 1]) << 8);
+
+ 		sum = sum + (0xFF & data[i]);
+
+ 		i += 2;
+
+ 	}
+
+ 	byte[] bytes = new byte[2];
+
+ 	// It exceeds 2147483648 (long 4 bytes), take the value 2 bytes lower for further
+
+ 	// accumulation.
+
+ 	int bits = 32;
+
+ 	while (bits > 0) {
+
+ 		// low
+
+ 		bytes[0] += (byte) (sum & 0xff);
+
+ 		sum >>= 8;
+
+ 		bits -= 8;
+
+ 		// high
+
+ 		bytes[1] += (byte) (sum & 0xff);
+
+ 		sum >>= 8;
+
+ 		bits -= 8;
+
+ 	}
+
+ 	data[2] = ((byte) ~bytes[0]);
+
+ 	data[3] = ((byte) ~bytes[1]);
+
+ 	return data;
+
+
+	}
+
+
+	/**
+
+  * calculate the value of the reversed byte. when receive the bits, the bits was reversed.
+
+  *
+
+  * @param bytes
+
+  * @return
+
+  */
+
+ public static int calReversedValue(byte[] bytes) {
+
+ 	int retValue = 0;
+
+ 	for (int i = 0; i < bytes.length; i++) {
+
+ 		retValue += ((bytes[i] & 0xFF) << (8 * i));
+
+ 	}
+
+ 	return retValue;
+
+ }
+
+
+	public static byte[] reversed(long value, int bits) {
+
+ 	byte[] b = new byte[Long.SIZE / 8];
+
+ 	for (int i = 0; i < Long.SIZE / 8; i++) {
+
+ 		b[i] = (byte) (value & 0xFF);
+
+ 		value >>= 8;
+
+ 	}
+
+ 	int cutFlag = Long.SIZE / 8;
+
+ 	for (int i = (Long.SIZE / 8 - 1); i >= 0; i--) {
+
+ 		if ((b[i] & 0xFF) != 0x0) {
+
+ 			cutFlag = (i + 1);
+
+ 			break;
+
+ 		}
+
+ 	}
+
+ 	byte[] retBytes = new byte[cutFlag];
+
+ 	System.arraycopy(b, 0, retBytes, 0, cutFlag);
+
+ 	if (bits > retBytes.length) {
+
+ 		byte[] emptyBytes = new byte[bits - retBytes.length];
+
+ 		return ArrayHelper.join(retBytes, emptyBytes);
+
+ 	} else {
+
+ 		return retBytes;
+
+ 	}
+
+ }
+
+
+	/**
+
+  * get the attendLog by received bytes the struct is defined below:
+
+  *
+
+  *
+
+
+	 * typedef struct _AttLog_{
+
+  * 	Int PIN; //U16 PIN, user number
+
+  * 	char verified;// verifying method
+
+  * 	char status; // attendance
+
+  * 	state time_t time_second; //seconds from 2000-01-01 00:00.
+
+  * }TAttLog, *PAttLog;
+
+  *
+ 
+*
+ * @param bytes
+ * @return
+ */
+ private List getAttendentLogFromBytes(byte[] bytes) {
+ List list = new ArrayList();
+ int logCount = calReversedValue(new byte[] { bytes[8], bytes[9], bytes[10], bytes[11] });
+ byte[] b = new byte[logCount];
+ System.arraycopy(bytes, 12, b, 0, logCount);
+
+ 
+ZKAttendentLog aLog = null;
+ for (int i = 0; i < (logCount / 8); i++) {
+ aLog = new ZKAttendentLog();
+ aLog.setUserNo(calReversedValue(new byte[] { b[(8 * i)], b[(8 * i) + 1] }));
+ aLog.setVerifyMode(calReversedValue(new byte[] { b[(8 * i + 2)] }));
+ aLog.setStatus(calReversedValue(new byte[] { b[(8 * i + 3)] }));
+ aLog.setDate(calReversedValue(new byte[] { b[(8 * i + 4)], b[(8 * i + 5)],
+ b[(8 * i + 6)], b[(8 * i + 7)] }));
+ list.add(aLog);
+ }
+ return list;
+ }
+
+ 
+/**
+ * get the Users from received bytes ths struct is definded below:
+ *
+ *
+
+ 
+	 * typedef struct _User_{
+
+  * 	U16 PIN; // user PIN in machine
+
+  * 	U8 Privilege;
+
+  * 	char Password[5]; // password
+
+  * 	char Name[8]; // user
+
+  * 	name U8 Card[5]; Card number, used for saving corresponding ID card
+
+  * 	number U8 Group; Group where user is
+
+  * 	U16 TimeZones; U32 PIN2; // 32 bit
+
+  * user PIN 2 }TUser, *PUser;
+
+  *
+ 
+*
+ * @param bytes
+ * @return
+ */
+ private List getUsersFromBytes(byte[] bytes) {
+ List list = new ArrayList();
+ //int userCount = calReversedValue(new byte[] { bytes[8], bytes[9], bytes[10], bytes[11] });
+ int userCount = bytes.length -12;
+ byte[] b = new byte[userCount];
+ System.arraycopy(bytes, 12, b, 0, userCount);
+ ZKUser user = null;
+ for (int i = 0; i < (userCount / 28); i++) {
+ user = new ZKUser();
+ user.setPin(calReversedValue(Arrays.copyOfRange(b, 28 * i + 0, 28 * i + 1)));
+ user.setPri(calReversedValue(Arrays.copyOfRange(b, 28 * i + 2, 28 * i + 2)));
+ user.setPassword(calReversedValue(Arrays.copyOfRange(b, 28 * i + 3, 28 * i + 7)) + "");
+ user.setName(calReversedValue(Arrays.copyOfRange(b, 28 * i + 8, 28 * i + 15)) + "");
+ user.setCardNo(calReversedValue(Arrays.copyOfRange(b, 28 * i + 16, 28 * i + 20)));
+ user.setGroup(calReversedValue(Arrays.copyOfRange(b, 28 * i + 21, 28 * i + 21)));
+ user.setTimezone(calReversedValue(Arrays.copyOfRange(b, 28 * i + 22, 28 * i + 23)));
+ user.setPin2(calReversedValue(Arrays.copyOfRange(b, 28 * i + 24, 28 * i + 27)));
+ list.add(user);
+ }
+ return list;
+ }
+
+ 
+}
